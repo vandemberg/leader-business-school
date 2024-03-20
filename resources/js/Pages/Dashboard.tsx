@@ -2,20 +2,36 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
 import { Thumb } from "@/components/courses/thumb";
 
-export default function Dashboard({ auth }: PageProps) {
+interface Course {
+    id: number;
+    title: string;
+    description: string;
+    thumbnail: string;
+}
+
+interface DashboardProps {
+    auth: any;
+    courses: Course[];
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">leader business school</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800  leading-tight">Cursos & Treinamentos</h2>}
         >
 
-            <p className="m-6 mx-6 text-xl text-gray-800 dark:text-white text-bold">
+            <p className="m-6 mx-6 text-xl text-gray-800 text-bold">
                 Olá, {auth.user.name}!
             </p>
 
             <div className='m-6 p-6 flex gap-4'>
-                <Thumb />
+                {courses.map((course: any) => (
+                    <Thumb key={course.id} course={course} />
+                ))}
             </div>
         </AuthenticatedLayout>
     );
 }
+
+export default Dashboard;

@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CouresController;
+use App\Http\Controllers\CoursesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use App\Models\Course;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,14 +28,16 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+    $courses = Course::all();
+    return Inertia::render('Dashboard')
+        ->with('courses', $courses);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/courses/maestria-lideranca', [CouresController::class, 'index'])->name('courses.maestria-lideranca');
+    Route::get('/courses/{id}', [CoursesController::class, 'show'])->name('courses.show');
 });
 
 require __DIR__ . '/auth.php';
