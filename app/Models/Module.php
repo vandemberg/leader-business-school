@@ -19,4 +19,14 @@ class Module extends Model
         'position',
     ];
 
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
+
+    public function videos()
+    {
+        return $this->hasMany(Video::class);
+    }
+
 }

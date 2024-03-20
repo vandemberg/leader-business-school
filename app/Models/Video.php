@@ -18,4 +18,10 @@ class Video extends Model
         'thumbnail',
         'time_in_seconds',
     ];
+
+    public function nmodule()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
 }

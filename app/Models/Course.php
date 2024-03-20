@@ -14,7 +14,13 @@ class Course extends Model
         'icon',
         'color',
         'status',
+        'thumbnail',
     ];
 
     use HasFactory;
+
+    public function modules()
+    {
+        return $this->hasMany(Module::class);
+    }
 }

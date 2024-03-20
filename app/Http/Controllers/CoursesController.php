@@ -9,7 +9,6 @@ class CoursesController extends Controller
 {
     public function show(Course $course)
     {
-        $nextVideo = $course->videos->first();
         return Inertia::render('Courses/Index')->with('course', $course);
     }
 }
