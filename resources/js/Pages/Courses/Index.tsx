@@ -1,7 +1,32 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { PageProps } from '@/types';
+import React from 'react';
 
-export default function Dashboard({ auth, course }: PageProps) {
+interface CourseProps {
+    videos: any[],
+    modules: any[],
+    currentVideo: {
+        id: number;
+        title: string;
+        description: string;
+        url: string;
+    },
+    currentModule: {
+        id: number;
+        title: string;
+        description: string;
+    },
+    course: {
+        id: number;
+        title: string;
+        description: string;
+        thumbnail: string;
+        icon: string;
+    },
+    auth: any
+}
+
+const Course: React.FC<CourseProps> = ({ auth, course, currentModule, currentVideo, videos, modules }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -9,22 +34,22 @@ export default function Dashboard({ auth, course }: PageProps) {
                 <div className='flex items-center text-gray-800'>
                     <i className='bx bx-left-arrow-alt cursor-pointer' style={{ fontSize: '22px' }}></i>
                     <h2 className="font-semibold text-xl  leading-tight flex items-center">
-                        Maestria em liderança
+                        {course.title}
                     </h2>
                 </div>
             }
         >
             <p className="m-6 mx-6 text-xltext-bold text-gray-800">
-                Maestria em liderança e gestão de pessoas
+                {currentVideo.title}
             </p>
 
-            <div className="flex flex-1 bg-whitem-6 p-6 rounded-smgap-6 max-h-[600px] items-center">
-                <video className="w-3/4 h-[450px]" controls>
-                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4" />
-                    Your browser does not support the video tag.
-                </video>
+            <div className="flex flex-1 bg-whitem-6 p-6 rounded-smgap-6 max-h-[600px] gap-2">
+                <div className='flex w-3/4 h-[560px]'>
+                    <iframe className="w-full h-full" src={currentVideo.url}>
+                    </iframe>
+                </div>
 
-                <div className='w-1/4 bg-gray-100rounded-sm border-gray-800 border-solid border-x border-y overflow-scroll max-h-[450px]'>
+                <div className='w-1/4 bg-gray-100rounded-sm border-gray-800 border-solid border-x border-y overflow-scroll max-h-[600px]'>
                     <div className='flex flex-col items-center gap-2 p-2'>
                         <span className='text-gray-800'> Conteúdos </span>
 
@@ -41,7 +66,11 @@ export default function Dashboard({ auth, course }: PageProps) {
                 </div>
             </div>
 
-            <p className='pl-12'></p>
+            <p className='pl-12'>
+                {currentVideo.description}
+            </p>
         </AuthenticatedLayout>
     );
 }
+
+export default Course;

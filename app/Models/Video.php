@@ -17,6 +17,7 @@ class Video extends Model
         'transcription',
         'thumbnail',
         'time_in_seconds',
+        'module_id',
     ];
 
     public function nmodule()
