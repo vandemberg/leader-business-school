@@ -4,17 +4,11 @@ import React from 'react';
 
 interface CourseProps {
     videos: any[],
-    modules: any[],
     currentVideo: {
         id: number;
         title: string;
         description: string;
         url: string;
-    },
-    currentModule: {
-        id: number;
-        title: string;
-        description: string;
     },
     course: {
         id: number;
@@ -26,7 +20,7 @@ interface CourseProps {
     auth: any
 }
 
-const Course: React.FC<CourseProps> = ({ auth, course, currentModule, currentVideo, videos, modules }) => {
+const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}

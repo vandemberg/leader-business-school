@@ -14,12 +14,13 @@ return new class extends Migration {
             $table->id();
 
             $table->string('title');
-            $table->string('description')->nullable();
+            $table->text('description')->nullable();
             $table->string('url');
             $table->enum('status', ['draft', 'published'])->default('draft');
             $table->text('transcription')->nullable();
             $table->string('thumbnail')->nullable();
             $table->string('time_in_seconds')->nullable();
+            $table->foreignId('course_id')->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });

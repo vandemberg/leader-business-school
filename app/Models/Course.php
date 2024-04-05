@@ -19,8 +19,8 @@ class Course extends Model
 
     use HasFactory;
 
-    public function modules()
+    public function videos()
     {
-        return $this->hasMany(Module::class);
+        return $this->hasMany(Video::class);
     }
 }

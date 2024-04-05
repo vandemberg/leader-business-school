@@ -33,9 +33,9 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('admin_api')
+            Route::middleware('api_admin')
                 ->prefix('admin/api')
-                ->group(base_path('routes/admin_api.php'));
+                ->group(base_path('routes/api_admin.php'));
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));

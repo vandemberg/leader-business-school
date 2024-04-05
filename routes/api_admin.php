@@ -12,24 +12,16 @@ Route::get('/health_check', function (Request $request) {
 
 Route::post('/course', function (Request $request) {
     $courseData = $request->validate([
-        'name' => 'required|string',
+        'title' => 'required|string',
         'description' => 'required|string',
-        'modules' => [
-            'required',
-            'array',
-            'min:1',
-            'each' => 'required|array',
-        ],
+        'icon' => 'required|string',
+        'thumbnail' => 'required|string',
+        'videos' => 'required|array',
     ]);
 
     $course = new Course();
     $course->name = $courseData['name'];
     $course->description = $courseData['description'];
-
-    $module = new Module();
-    $module->name = 'Module 1';
-    $module->description = 'Module 1 description';
-
 
     return response()->json($course->with('modules'));
 });

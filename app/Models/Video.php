@@ -17,12 +17,12 @@ class Video extends Model
         'transcription',
         'thumbnail',
         'time_in_seconds',
-        'module_id',
+        'course_id',
     ];
 
-    public function nmodule()
+    public function course()
     {
-        return $this->belongsTo(Module::class);
+        return $this->belongsTo(Course::class);
     }
 
 }

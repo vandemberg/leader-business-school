@@ -13,7 +13,8 @@ return new class extends Migration {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description')->nullable();
+            $table->string('thumbnail')->nullable();
+            $table->text('description')->nullable();
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
             $table->enum('status', ['outdated', 'open', 'inprogress'])->default('open');
