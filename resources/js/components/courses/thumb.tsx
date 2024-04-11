@@ -13,11 +13,6 @@ interface ThumbProps {
 }
 
 const Thumb: React.FC<ThumbProps> = ({ course }) => {
-
-    function handleClick() {
-
-    }
-
     return (
         <div className="sm:rounded-lg flex items-center justify-between flex-col w-1/4 border-2 border-solid border-gray-600 hover:border-gray-400 flex-grow max-w-[320px] flex-wrap">
             <div className="w-full px-2 text-left">
@@ -36,7 +31,7 @@ const Thumb: React.FC<ThumbProps> = ({ course }) => {
                 </div>
 
                 <div className="w-full flex items-center justify-center my-4">
-                    <Link href={`/courses/${course.id}`} className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full w-full text-center">
+                    <Link href={`/courses/${course.id}/watch`} className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full w-full text-center">
                         Assistir o curso
                     </Link>
                 </div>

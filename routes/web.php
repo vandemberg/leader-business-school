@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\TeachersController;
+use App\Http\Controllers\WatchController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,12 +21,7 @@ use App\Models\Course;
 */
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return response()->redirectTo('/dashboard');
 });
 
 Route::get('/dashboard', function () {
@@ -43,6 +39,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/courses', [CoursesController::class, 'index'])->name('courses.index');
     Route::get('/teachers', [TeachersController::class, 'index'])->name('teachers.index');
+
+    Route::get('/courses/{course}/watch', [WatchController::class, 'index'])->name('courses.watch');
+    Route::get('/courses/{course}/videos/{video}', [WatchController::class, 'show'])->name('courses.videos.show');
 });
 
 require __DIR__ . '/auth.php';

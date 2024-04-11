@@ -1,5 +1,4 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PageProps } from '@/types';
 import { Thumb } from "@/components/courses/thumb";
 
 interface Course {

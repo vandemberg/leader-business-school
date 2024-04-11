@@ -1,7 +1,6 @@
 import sandbox1 from "../assets/images/lider-sandbox-1.png";
 import sandbox2 from "../assets/images/lider-sandbox-2.png";
 import sandbox3 from "../assets/images/lider-sandbox-3.png";
-import sandbox4 from "../assets/images/lider-sandbox-4.jpeg";
 import sandbox5 from "../assets/images/lider-sandbox-5.jpeg";
 import sandbox6 from "../assets/images/lider-sandbox-6.jpeg";
 import sandbox7 from "../assets/images/lider-sandbox-7.jpeg";

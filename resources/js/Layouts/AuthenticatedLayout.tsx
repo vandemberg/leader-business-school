@@ -16,7 +16,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="shrink-0 flex items-center p-2">
-                                <Link href="/dashboard">
+                                <Link href="/dashboard" className='pt-6'>
                                     <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
@@ -126,6 +126,14 @@ export default function Authenticated({ user, header, children }: PropsWithChild
             )}
 
             <main>{children}</main>
+
+            <footer className="bg-white shadow-sm mt-6 border-gray-100 border-t-2">
+                <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+                    <div className="flex justify-between">
+                        <div className="text-sm text-gray-500 text-center w-full">Leader in Company &copy; 2024</div>
+                    </div>
+                </div>
+            </footer>
         </div>
     );
 }
