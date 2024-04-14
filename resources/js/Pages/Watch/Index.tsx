@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { PageProps } from '@/types';
 import React from 'react';
+import YouTube from 'react-youtube';
 
 interface CourseProps {
     videos: any[],
@@ -39,7 +39,22 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
 
             <div className="flex flex-1 bg-whitem-6 p-6 rounded-smgap-6 max-h-[600px] gap-2">
                 <div className='flex w-3/4 h-[560px]'>
-                    <iframe width="100%" height="100%" src={currentVideo.url} title="Fala Líderes, segue aula do nosso encontro 01 da Mentoria Maestria em Liderança." frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <YouTube
+                        videoId={currentVideo.url}
+                        onEnd={() => {
+                            console.log('Video has ended!');
+                        }}
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                        }}
+                        opts={{
+                            height: '100%',
+                            width: '100%',
+                            playerVars: {
+                                autoplay: 1,
+                            },
+                        }} />
                 </div>
 
                 <div className='w-1/4 bg-gray-100rounded-sm border-gray-800 border-solid border-x border-y overflow-scroll max-h-[600px]'>

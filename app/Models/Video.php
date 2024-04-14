@@ -25,4 +25,21 @@ class Video extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function watchVideos()
+    {
+        return $this->hasMany(WatchVideo::class);
+    }
+
+    public function watchStatus($user)
+    {
+        $watchVideo = $this->watchVideos()
+            ->where('user_id', $user->id)
+            ->first();
+
+        if ($watchVideo) {
+            return $watchVideo->status;
+        }
+
+        return 'pending';
+    }
 }

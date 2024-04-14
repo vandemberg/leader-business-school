@@ -2,17 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Course;
+use App\Models\WatchVideo;
 use App\Models\Video;
-use Inertia\Inertia;
 
 class VideosController extends Controller
 {
-    public function show(Course $course, Video $video)
+    public function startWatch(Video $video)
     {
-        return Inertia::render('Videos/Index')
-            ->with('course', $course)
-            ->with('video', $video);
+        $user = auth()->user();
+
+        WatchVideo::create([
+            'user_id' => $user->id,
+            'video_id' => $video->id,
+            'status' => 'watching',
+        ]);
+
+        return response()->json([
+            'success' => true
+        ])->setStatusCode(200);
+    }
+
+    public function finishWatch(Video $video)
+    {
+        $user = auth()->user();
+
+        $watchVideo = WatchVideo::where('user_id', $user->id)
+            ->where('video_id', $video->id)
+            ->first();
+
+        $watchVideo->update([
+            'status' => 'finished',
+            'finished_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true
+        ])->setStatusCode(200);
     }
 }

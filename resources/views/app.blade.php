@@ -17,6 +17,14 @@
   @viteReactRefresh
   @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
   @inertiaHead
+
+  <style>
+  body {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  </style>
 </head>
 
 <body class="font-sans antialiased">
