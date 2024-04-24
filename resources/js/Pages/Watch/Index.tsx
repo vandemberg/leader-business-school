@@ -1,6 +1,9 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import React from 'react';
 import YouTube from 'react-youtube';
+import { router } from '@inertiajs/react'
+import axios from 'axios';
+import "./index.css";
 
 interface CourseProps {
     videos: any[],
@@ -42,7 +45,8 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                     <YouTube
                         videoId={currentVideo.url}
                         onEnd={() => {
-                            console.log('Video has ended!');
+                            axios.post(`/videos/${currentVideo.id}/complete`)
+                                .then(() => router.visit(`/courses/${course.id}/watch`));
                         }}
                         style={{
                             width: '100%',
@@ -62,12 +66,15 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                         <span className='text-gray-800'> Conteúdos </span>
 
                         {videos.map((video) => (
-                            <a href={`/courses/${course.id}/videos/${video.id}`} key={video.id} className='w-full h-1/6 bg-gray-200flex rounded-sm p-2 flex-col cursor-pointer hover:border-x-2 hover:border-y-2 border-gray-800'>
+                            <a href={`/courses/${course.id}/videos/${video.id}`} key={video.id} className={`w-full h-1/6 bg-gray-200flex rounded-sm p-2 flex-col cursor-pointer ${video.watched ? 'watched' : 'not-watched'} `}>
                                 <div className='flex items-center gap-4'>
                                     <i className='bx bxs-videos'></i>
                                     <span className='font-bold'>{video.title}</span>
                                 </div>
-                                <span className='w-full text-right text-sm pl-4 text-gray-500 mt-2'>{video.time_in_seconds} segundos</span>
+
+                                {video.time_in_seconds > 0 && (
+                                    <span className='w-full text-right text-sm pl-4 text-gray-500 mt-2'>{video.time_in_seconds} segundos</span>
+                                )}
                             </a>
                         ))}
                     </div>

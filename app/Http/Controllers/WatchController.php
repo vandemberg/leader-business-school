@@ -19,8 +19,15 @@ class WatchController extends Controller
 
     public function show(Course $course, Video $video)
     {
-        $videos = $course->videos()->get();
-        $currentVideo = $videos->where('id', $video->id)->first();
+        $user = auth()->user();
+        $currentVideo = Video::where('id', $video->id)->first();
+        $videos = $course->videos()->get()->each(function ($video) use ($user) {
+            $video->watched = WatchVideo::where('user_id', $user->id)
+                ->where('video_id', $video->id)
+                ->where('user_id', $user->id)
+                ->exists();
+        });
+
 
         $this->createWatchVideo($currentVideo);
 
@@ -41,6 +48,7 @@ class WatchController extends Controller
         if ($watchVideo) {
             $watchVideo->update([
                 'status' => WatchVideo::STATUS_WATCHED,
+                'finished_at' => now(),
             ]);
         }
 

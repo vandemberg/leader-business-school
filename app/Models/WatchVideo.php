@@ -9,8 +9,8 @@ class WatchVideo extends Model
 {
     use HasFactory;
 
-    const STATUS_WATCHING = 'watching';
-    const STATUS_WATCHED = 'watched';
+    public const STATUS_WATCHING = 'watching';
+    public const STATUS_WATCHED = 'finished';
 
     protected $fillable = [
         'user_id',

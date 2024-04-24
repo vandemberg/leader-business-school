@@ -1,0 +1,7 @@
+.watched i {
+    color: #f00;
+}
+
+.not-watched:hover, .watched:hover {
+    color: #7F8FFE;
+}

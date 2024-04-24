@@ -9,7 +9,7 @@ interface ThumbProps {
         description: string;
         thumbnail: string;
         icon: string;
-        complete_level: number;
+        progress: number;
     }
 }
 
@@ -32,9 +32,9 @@ const Thumb: React.FC<ThumbProps> = ({ course }) => {
                 </div>
 
                 <div className="flex-col gap-4 w-full flex items-center justify-center my-4">
-                    {course.complete_level || 0}% Concluído
+                    {course.progress || 0}% Concluído
                     <div className="h-1 w-full bg-neutral-200">
-                        <div className="h-1 bg-blue-500" style={{ width: `${course.complete_level || 0}%` }}></div>
+                        <div className="h-1 bg-blue-500" style={{ width: `${course.progress || 0}%` }}></div>
                     </div>
 
                     <Link href={`/courses/${course.id}/watch`} className="bg-blue-500 text-white font-bold py-2 px-4 rounded-full w-full text-center">

@@ -62,7 +62,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                         <Dropdown.Content>
                                             <Dropdown.Link href={route('profile.edit')}>Perfil</Dropdown.Link>
                                             <Dropdown.Link href={route('logout')} method="post" as="button">
-                                                Log Out
+                                                Sair
                                             </Dropdown.Link>
                                         </Dropdown.Content>
                                     </Dropdown>
@@ -131,8 +131,20 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
             <footer className="bg-white shadow-sm mt-6 border-gray-100 border-t-2">
                 <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between">
-                        <div className="text-sm text-gray-500 text-center w-full">Leader in Company &copy; 2024</div>
+                    <div className="flex justify-between flex-col">
+                        <div className="text-gray-500 text-center w-full"><strong>Leader in Company &copy; 2024</strong></div>
+                        <div className='text-sm text-gray-500 text-center w-full'>
+                            E-mail: leaderincompany@gmail.com
+                        </div>
+
+                        <div className='text-sm text-gray-500 text-center w-full'>
+                            Instagram: Jonatasllucas e Leaderincompany
+                        </div>
+
+
+                        <div className='text-sm text-gray-500 text-center w-full'>
+                            Telefone: 9962-5561
+                        </div>
                     </div>
                 </div>
             </footer>
