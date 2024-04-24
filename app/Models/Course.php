@@ -32,6 +32,10 @@ class Course extends Model
             ->orderBy('updated_at', 'desc')
             ->first();
 
+        if ($lastWatchedVideo == null) {
+            return $this->videos()->first();
+        }
+
         if ($lastWatchedVideo->status != WatchVideo::STATUS_WATCHED) {
             return $this->videos()
                 ->where('id', $lastWatchedVideo->video_id)
