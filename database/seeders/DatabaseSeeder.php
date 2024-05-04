@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             'title' => 'Maestria em Liderança',
             'description' => 'Aprenda a liderar com os melhores',
             'icon' => 'bx-chart',
-            'thumbnail' => '',
+            'thumbnail' => 'maestria_lider',
         ]);
 
     }

@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import React from 'react';
 import YouTube from 'react-youtube';
-import { router } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import axios from 'axios';
 import "./index.css";
 
@@ -29,13 +29,13 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
             user={auth.user}
             header={
                 <div className='flex items-center text-gray-800'>
-                    <i className='bx bx-left-arrow-alt cursor-pointer' style={{ fontSize: '22px' }}></i>
                     <h2 className="font-semibold text-xl  leading-tight flex items-center">
                         {course.title}
                     </h2>
                 </div>
             }
         >
+            <Head title={course.title} />
             <p className="m-6 mx-6 text-xltext-bold text-gray-800">
                 {currentVideo.title}
             </p>
@@ -55,8 +55,10 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                         opts={{
                             height: '100%',
                             width: '100%',
+                            modestbranding: 0,
+                            showinfo: 1,
                             playerVars: {
-                                autoplay: 1,
+                                autoplay: 0,
                             },
                         }} />
                 </div>

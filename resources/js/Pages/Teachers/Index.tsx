@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import jonatan from '@/assets/jonatas_lucas_perfil.jpeg';
+import { Head } from '@inertiajs/react';
 interface TeachersProps {
     auth: any;
     teachers: any[];
@@ -9,8 +10,10 @@ const Teachers: React.FC<TeachersProps> = ({ auth, teachers }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800  leading-tight">Instrutores</h2>}
+            header={<h2 className="font-semibold text-xl text-gray-800  leading-tight">Treinadores</h2>}
         >
+            <Head title="Treinadores" />
+
             <div className='flex flex-wrap pb-6'>
                 {teachers.map((teacher: any) => (
                     <div className="max-w-2xl mx-4 sm:max-w-sm md:max-w-sm lg:max-w-sm xl:max-w-sm sm:mx-auto md:mx-auto lg:mx-auto xl:mx-auto mt-16 bg-white shadow-xl rounded-lg text-gray-900">

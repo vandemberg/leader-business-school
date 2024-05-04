@@ -27,7 +27,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                         Dashboard
                                     </NavLink>
                                     <NavLink href={route('teachers.index')} active={route().current('teachers.index')}>
-                                        Instrutores
+                                        Treinadores
                                     </NavLink>
                                 </div>
                             </div>
@@ -132,7 +132,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
             <footer className="bg-white shadow-sm mt-6 border-gray-100 border-t-2">
                 <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between flex-col">
-                        <div className="text-gray-500 text-center w-full"><strong>Leader in Company &copy; 2024</strong></div>
+                        <div className="text-gray-500 text-center w-full"><strong>Entre em contato com a gente</strong> </div>
                         <div className='text-sm text-gray-500 text-center w-full'>
                             E-mail: leaderincompany@gmail.com
                         </div>
@@ -143,7 +143,7 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
 
                         <div className='text-sm text-gray-500 text-center w-full'>
-                            Telefone: 9962-5561
+                            Telefone: (82) 9 9962-5561
                         </div>
                     </div>
                 </div>
