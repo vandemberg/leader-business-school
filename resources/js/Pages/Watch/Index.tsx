@@ -40,7 +40,7 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                 {currentVideo.title}
             </p>
 
-            <div className="flex flex-1 bg-whitem-6 p-6 rounded-smgap-6 max-h-[600px] gap-2">
+            <div className="flex flex-1 bg-whitem-6 p-6 gap-6 max-h-[600px]">
                 <div className='flex w-3/4 h-[560px]'>
                     <YouTube
                         videoId={currentVideo.url}
@@ -63,15 +63,15 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                         }} />
                 </div>
 
-                <div className='w-1/4 bg-gray-100rounded-sm border-gray-800 border-solid border-x border-y overflow-scroll max-h-[600px]'>
+                <div className='w-1/4 bg-gray-100 rounded-lg p-2 border-gray-800 border-solid border-x border-y overflow-scroll max-h-[600px]'>
                     <div className='flex flex-col items-center gap-2 p-2'>
-                        <span className='text-gray-800'> Conteúdos </span>
+                        <span className='text-gray-800 font-bold'> Conteúdos </span>
 
                         {videos.map((video) => (
-                            <a href={`/courses/${course.id}/videos/${video.id}`} key={video.id} className={`w-full h-1/6 bg-gray-200flex rounded-sm p-2 flex-col cursor-pointer ${video.watched ? 'watched' : 'not-watched'} `}>
+                            <a href={`/courses/${course.id}/videos/${video.id}`} key={video.id} className={`w-full h-1/6 bg-gray-200 flex rounded-sm p-2 flex-col cursor-pointer ${video.watched ? 'watched' : 'not-watched'} `}>
                                 <div className='flex items-center gap-4'>
                                     <i className='bx bxs-videos'></i>
-                                    <span className='font-bold'>{video.title}</span>
+                                    <span>{video.title}</span>
                                 </div>
 
                                 {video.time_in_seconds > 0 && (

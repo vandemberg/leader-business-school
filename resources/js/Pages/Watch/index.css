@@ -2,6 +2,10 @@
     color: #415F82;
 }
 
+.watched span {
+    color: #415F82;
+}
+
 .not-watched:hover, .watched:hover {
     color: #7F8FFE;
 }
