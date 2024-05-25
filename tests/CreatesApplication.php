@@ -12,8 +12,8 @@ trait CreatesApplication
      */
     public function createApplication(): Application
     {
-        $app = require __DIR__.'/../bootstrap/app.php';
-
+        $app = require __DIR__ . '/../bootstrap/app.php';
+        $app->loadEnvironmentFrom('.env.test');
         $app->make(Kernel::class)->bootstrap();
 
         return $app;
