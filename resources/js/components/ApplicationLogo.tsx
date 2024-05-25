@@ -5,6 +5,6 @@ export default function ApplicationLogo(props: StyleHTMLAttributes<HTMLImageElem
     const finalHeight = props.style?.height || 100;
 
     return (
-        <img src={logo} style={{ height: finalHeight, width: "auto", ...props, borderRadius: '50%' }} />
+        <img src={logo} style={{ height: finalHeight, width: "auto", ...props }} />
     );
 }
