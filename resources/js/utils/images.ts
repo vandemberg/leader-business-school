@@ -6,6 +6,8 @@ import sandbox6 from "../assets/images/lider-sandbox-6.jpeg";
 import sandbox7 from "../assets/images/lider-sandbox-7.jpeg";
 import sandbox8 from "../assets/images/lider-sandbox-8.jpeg";
 import sandbox9 from "../assets/images/lider-sandbox-9.jpeg";
+import bookClub from "../assets/images/clube-do-livro.jpeg";
+import liderancaCoorporativa from "../assets/images/lideranca-coorporativa.jpeg";
 
 const images = {
     sandbox1,
@@ -17,6 +19,8 @@ const images = {
     sandbox7,
     sandbox8,
     sandbox9,
+    bookClub,
+    liderancaCoorporativa,
 };
 
 export default images;
