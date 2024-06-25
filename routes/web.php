@@ -5,10 +5,12 @@ use App\Http\Controllers\CoursesController;
 use App\Http\Controllers\TeachersController;
 use App\Http\Controllers\WatchController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use App\Models\Course;
+
+// class from admin
+use App\Http\Controllers\Admin\LoginController as AdminLoginController;
+use App\Http\Controllers\Admin\CoursesController as AdminCoursesController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +41,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/courses/{course}/videos/{video}', [WatchController::class, 'show'])->name('courses.videos.show');
     Route::post('/videos/{video}/complete', [WatchController::class, 'complete'])
         ->name('courses.videos.store');
+});
+
+Route::prefix('admin')->group(function () {
+    Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
+    Route::get('/courses', [AdminCoursesController::class, 'index']);
+    Route::get('/', [AdminDashboardController::class, 'index']);
 });
 
 require __DIR__ . '/auth.php';

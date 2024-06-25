@@ -14,7 +14,7 @@ class TeachersController extends Controller
                 'name' => 'Jonatas Lucas',
                 'email' => 'jonatas.lucas@gmail.com',
                 'skills' => 'Consultor, Treinador e Founder da Leader in Company',
-                'bio' => 'Jonatas com mais de 10 anos em posições de liderança em empresas renomadas, Jonatas Lucas decidiu se dedicar ao ensino do que faz um líder. Atualmente é consultor, instrutor e founder da Leader in Company.',
+                'bio' => 'Jonatas é consultor empresarial e Treinador comportamental. Traz consigo uma vasta experiência em Neurociência, Marketing, Liderança, Comunicação, Produtividade e Comportamento humano. Com mais de uma década de atuação em prestigiadas multinacionais, Jonatas tem dedicado os últimos seis anos ao treinamento de pessoas, e agora concentra seus esforços no desenvolvimento de líderes e equipes. Seu objetivo atual é criar e aprimorar líderes para um novo mercado, caracterizado por profissionais mais eficazes e positivos.',
                 'photo' => 'https://randomuser.me/api'
             ],
         ];

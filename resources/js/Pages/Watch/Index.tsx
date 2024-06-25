@@ -75,7 +75,7 @@ const Course: React.FC<CourseProps> = ({ auth, course, currentVideo, videos }) =
                                 </div>
 
                                 {video.time_in_seconds > 0 && (
-                                    <span className='w-full text-right text-sm pl-4 text-gray-500 mt-2'>{video.time_in_seconds} segundos</span>
+                                    <span className='w-full text-right text-sm pl-4 text-gray-500 mt-2'>{secondsToString(video.time_in_seconds)}</span>
                                 )}
                             </a>
                         ))}
