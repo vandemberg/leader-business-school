@@ -4,6 +4,7 @@ import YouTube from 'react-youtube';
 import { Head, router } from '@inertiajs/react'
 import axios from 'axios';
 import "./index.css";
+import { secondsToString } from "../../utils/seconds-to-string";
 
 interface CourseProps {
     videos: any[],
