@@ -15,14 +15,14 @@ class Course extends Model
         'color',
         'status',
         'thumbnail',
+        'responsible_id',
     ];
 
     use HasFactory;
 
-    public function videos()
-    {
-        return $this->hasMany(Video::class);
-    }
+    protected $attributes = [
+        'status' => 'draft',
+    ];
 
     public function currentVideo($user): Video
     {
@@ -50,5 +50,15 @@ class Course extends Model
         }
 
         return $this->videos()->first();
+    }
+
+    public function modules()
+    {
+        return $this->hasMany(Module::class);
+    }
+
+    public function responsible()
+    {
+        return $this->belongsTo(User::class, 'responsible_id');
     }
 }

@@ -43,10 +43,4 @@ Route::middleware('auth')->group(function () {
         ->name('courses.videos.store');
 });
 
-Route::prefix('admin')->group(function () {
-    Route::get('/login', [AdminLoginController::class, 'index'])->name('admin.login');
-    Route::get('/courses', [AdminCoursesController::class, 'index']);
-    Route::get('/', [AdminDashboardController::class, 'index']);
-});
-
 require __DIR__ . '/auth.php';
