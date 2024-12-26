@@ -1,9 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Admin\CoursesController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Owner\CoursesController;
-use App\Http\Controllers\Admin\LoginController;
+use App\Http\Controllers\Admin\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +15,6 @@ use App\Http\Controllers\Admin\LoginController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::post('admin/login', [LoginController::class, 'store']);
-
-Route::prefix('admin/v1/')->group(function () {
-    Route::post('/courses', [CoursesController::class, 'create']);
-});
+Route::post('admin/login', [AuthController::class, 'login']);
+Route::post('admin/refresh', [AuthController::class, 'refresh'])->middleware('api');
+Route::resource('admin/courses', CoursesController::class);
