@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\CoursesController;
+use App\Http\Controllers\Admin\ModulesController;
+use App\Http\Controllers\Admin\VideosController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 
@@ -21,6 +23,8 @@ Route::prefix('admin')->group(function () {
     Route::middleware(['auth:api', 'api'])->group(function () {
         Route::post('refresh', [AuthController::class, 'refresh']);
         Route::resource('courses', CoursesController::class);
+        Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class);
+        Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class);
     });
 });
 

@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Module extends Model
 {
     use HasFactory;
-    protected $fillable = ['name', 'description', 'course_id'];
+    protected $fillable = ['name', 'description', 'course_id', 'status'];
+
+    const STATUS_DRAFT = 'draft';
 
     public function videos(): HasMany
     {
