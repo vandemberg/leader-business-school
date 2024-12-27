@@ -15,6 +15,12 @@ use App\Http\Controllers\Admin\AuthController;
 |
 */
 
-Route::post('admin/login', [AuthController::class, 'login']);
-Route::post('admin/refresh', [AuthController::class, 'refresh'])->middleware('api');
-Route::resource('admin/courses', CoursesController::class);
+Route::prefix('admin')->group(function () {
+    Route::post('login', [AuthController::class, 'login']);
+
+    Route::middleware(['auth:api', 'api'])->group(function () {
+        Route::post('refresh', [AuthController::class, 'refresh']);
+        Route::resource('courses', CoursesController::class);
+    });
+});
+

@@ -22,10 +22,30 @@ class CourseFactory extends Factory
         ];
     }
 
-    public function published()
+    public function complete()
     {
         return $this->state([
-            'status' => 'published',
+            'status' => Course::STATUS_COMPLETE,
         ]);
+    }
+
+    public function withVideos()
+    {
+        return $this->afterCreating(function (Course $course) {
+            $module = $course->modules()->create([
+                'name' => $this->faker->sentence(2),
+                'description' => $this->faker->paragraph(2),
+            ]);
+
+            $module->videos()->create([
+                'title' => $this->faker->sentence(3),
+                'description' => $this->faker->paragraph(2),
+                'url' => $this->faker->url,
+                'status' => 'published',
+                'transcription' => $this->faker->paragraph(3),
+                'time_in_seconds' => $this->faker->numberBetween(60, 3600),
+                'course_id' => $course->id,
+            ]);
+        });
     }
 }

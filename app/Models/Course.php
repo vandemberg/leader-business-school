@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Course extends Model
 {
 
+    const STATUS_DRAFT = 'draft';
+    const STATUS_IN_PROGRESS = 'inprogress';
+    const STATUS_COMPLETE = 'complete';
+
     protected $fillable = [
         'title',
         'description',
