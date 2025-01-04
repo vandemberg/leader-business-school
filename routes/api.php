@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ModulesController;
 use App\Http\Controllers\Admin\VideosController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +27,7 @@ Route::prefix('admin')->group(function () {
         Route::post('courses/{course}/update', [CoursesController::class, 'update'])->name('courses.update');
         Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class);
         Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class);
+        Route::resource('users', UsersController::class);
     });
 });
 
