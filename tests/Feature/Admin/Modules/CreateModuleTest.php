@@ -46,6 +46,6 @@ class CreateModuleTest extends TestCase
 
         $response = $this->post("/api/admin/courses/{$course->id}/modules", []);
         $response->assertStatus(422);
-        $response->assertJsonValidationErrors(['name', 'description']);
+        $response->assertJsonValidationErrors(['name']);
     }
 }

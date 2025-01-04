@@ -15,7 +15,13 @@ class DashboardController extends Controller
         $courses = Course::all();
 
         $courses->each(function ($course) use ($user) {
-            $videos = $course->videos()->get();
+            if (strpos($course->thumbnail, 'thumbnails/') !== false) {
+                $course->thumbnail = url('/') . $course->thumbnail;
+            }
+        });
+
+        $courses->each(function ($course) use ($user) {
+            $videos = $course->modules()->with('videos')->get()->pluck('videos')->flatten();
             $totalVideos = $videos->count();
             $totalDone = WatchVideo::where('user_id', $user->id)
                 ->whereIn('video_id', $videos->pluck('id'))
@@ -23,7 +29,7 @@ class DashboardController extends Controller
                 ->get()
                 ->count();
 
-            $progress = ($totalDone / $totalVideos) * 100;
+            $progress = $totalVideos > 0 ? ($totalDone / $totalVideos) * 100 : 0;
             $course->progress = round($progress, 0);
         });
 

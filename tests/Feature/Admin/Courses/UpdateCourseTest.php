@@ -32,7 +32,11 @@ class UpdateCourseTest extends TestCase
             'thumbnail' => $file,
         ];
 
-        $response = $this->put(route('courses.update', $course), $data);
+        $response = $this->post(
+            uri: route('courses.update', $course),
+            data: $data,
+            headers: [ 'Content-Type' => 'multipart/form-data' ]
+        );
 
         $response->assertStatus(200);
         $this->assertDatabaseHas('courses', [
@@ -43,7 +47,11 @@ class UpdateCourseTest extends TestCase
             'status' => $data['status'],
         ]);
 
-        Storage::disk('public')->assertExists('thumbnails/thumbnail_' . $course->title . '.jpg');
+        $thumbnail = Course::find($course->id)->thumbnail;
+        $path_split  = explode('/', $thumbnail);
+        $file_name = end($path_split);
+
+        Storage::disk('public')->assertExists("/thumbnails/{$file_name}");
     }
 
     public function test_update_required_fields()
@@ -58,7 +66,9 @@ class UpdateCourseTest extends TestCase
             'status' => '',
         ];
 
-        $response = $this->put(route('courses.update', $course), $data);
+        $response = $this->post(route('courses.update', $course), $data, [
+            'Content-Type' => 'multipart/form-data',
+        ]);
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['title', 'description', 'status']);

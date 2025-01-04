@@ -9,11 +9,18 @@ use Illuminate\Http\Request;
 
 class ModulesController extends Controller
 {
+    public function index(Request $request, Course $course)
+    {
+        $modules = $course->modules()->with('videos')->get();
+
+        return response()->json(data: $modules, status: 200);
+    }
+
     public function store(Request $request, Course $course)
     {
         $data = $request->validate([
             'name' => 'required|string',
-            'description' => 'required|string',
+            'description' => 'string',
         ]);
 
         $data['status'] = Module::STATUS_DRAFT;

@@ -33,6 +33,7 @@ class CreateCourseTest extends TestCase
         $course = Course::find($courseId);
 
         $response->assertStatus(201);
+
         $this->assertEquals($courseData['title'], $course->title);
         $this->assertEquals($courseData['description'], $course->description);
         $this->assertEquals($courseData['icon'], $course->icon);
@@ -40,8 +41,12 @@ class CreateCourseTest extends TestCase
         $this->assertEquals($this->user->id, $course->responsible_id);
         $this->assertEquals(Course::STATUS_DRAFT, $course->status);
 
-        Storage::disk('public')->assertExists('thumbnails/thumbnail_' . $course->title . '.jpg');
-        Storage::disk('public')->delete('thumbnails/thumbnail_' . $course->title . '.jpg');
+        $thumbnail = Course::find($course->id)->thumbnail;
+        $path_split  = explode('/', $thumbnail);
+        $file_name = end($path_split);
+
+        Storage::disk('public')->assertExists('thumbnails/' . $file_name);
+        Storage::disk('public')->delete('thumbnails/' . $file_name);
     }
 
     /**

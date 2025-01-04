@@ -30,22 +30,23 @@ class Course extends Model
 
     public function currentVideo($user): Video
     {
-        $videosIds = $this->videos()->get()->pluck('id');
+        $videos = $this->videos()->get();
+        $videosIds = $videos->pluck('id');
         $lastWatchedVideo = $user->watchVideos()
             ->whereIn('video_id', $videosIds)
             ->orderBy('updated_at', 'desc')
             ->first();
 
         if ($lastWatchedVideo == null) {
-            return $this->videos()->first();
+            return $videos->first();
         }
 
         if ($lastWatchedVideo->status != WatchVideo::STATUS_WATCHED) {
-            return $this->videos()
+            return $videos
                 ->where('id', $lastWatchedVideo->video_id)
                 ->first();
         } else {
-            $nextVideo = $this->videos()
+            $nextVideo = $videos
                 ->where('id', '>', $lastWatchedVideo->video_id)
                 ->first();
 
@@ -53,7 +54,7 @@ class Course extends Model
                 return $nextVideo;
         }
 
-        return $this->videos()->first();
+        return $videos->first();
     }
 
     public function modules()
@@ -64,5 +65,10 @@ class Course extends Model
     public function responsible()
     {
         return $this->belongsTo(User::class, 'responsible_id');
+    }
+
+    public function videos()
+    {
+        return $this->hasManyThrough(Video::class, Module::class);
     }
 }

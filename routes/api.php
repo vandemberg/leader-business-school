@@ -22,7 +22,8 @@ Route::prefix('admin')->group(function () {
 
     Route::middleware(['auth:api', 'api'])->group(function () {
         Route::post('refresh', [AuthController::class, 'refresh']);
-        Route::resource('courses', CoursesController::class);
+        Route::resource('courses', CoursesController::class, ['except' => ['create', 'edit', 'update']]);
+        Route::post('courses/{course}/update', [CoursesController::class, 'update'])->name('courses.update');
         Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class);
         Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class);
     });

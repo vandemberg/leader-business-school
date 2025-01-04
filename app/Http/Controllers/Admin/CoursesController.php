@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Controller;
 use Illuminate\Http\Request;
 use App\Models\Course;
+use Storage;
 
 class CoursesController extends Controller
 {
@@ -17,6 +18,11 @@ class CoursesController extends Controller
         }
 
         $courses = $query->get();
+
+        $courses->each(function ($course) {
+            $course->thumbnail = url('/') . $course->thumbnail;
+        });
+
         return response()->json($courses);
     }
 
@@ -26,6 +32,8 @@ class CoursesController extends Controller
             ->load('responsible')
             ->load('modules')
             ->load('modules.videos');
+
+        $course->thumbnail = url('/') . $course->thumbnail;
 
         return response()->json(
             $course
@@ -84,11 +92,14 @@ class CoursesController extends Controller
         if ($request->hasFile(key: 'thumbnail')) {
             $file = $request->file(key: 'thumbnail');
             $filename = 'thumbnail_' . $course->title . '.' . $file->getClientOriginalExtension();
+            $filename = str_replace(' ', '_', $filename);
             $path = $file->storeAs(path: 'thumbnails', name: $filename, options: 'public');
 
-            return $path;
+            $url = Storage::url($path);
+
+            return $url;
         }
 
-        return '';
+        return 'https://via.placeholder.com/500';
     }
 }

@@ -6,27 +6,49 @@ use App\Models\Course;
 use App\Models\Module;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Faker\Factory as Faker;
 
 class ModulesControllerTest extends TestCase
 {
     use RefreshDatabase;
+
+    private $faker;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->faker = Faker::create();
+    }
 
     public function test_store_module()
     {
         $course = Course::factory()->create();
 
         $response = $this->postJson($this->url($course), [
-            'name' => 'Test Module',
-            'description' => 'Test Description',
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
         ]);
 
         $response->assertStatus(201);
         $this->assertDatabaseHas('modules', [
-            'name' => 'Test Module',
-            'description' => 'Test Description',
+            'name' => $response['name'],
+            'description' => $response['description'],
             'course_id' => $course->id,
             'status' => Module::STATUS_DRAFT,
         ]);
+    }
+
+    public function test_store_module_validation()
+    {
+        $course = Course::factory()->create();
+
+        $response = $this->postJson($this->url($course), [
+            'name' => '',
+            'description' => '',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name']);
     }
 
     public function test_update_module()
@@ -36,18 +58,34 @@ class ModulesControllerTest extends TestCase
 
         $url = $this->url($course) . '/' . $module->id;
         $response = $this->putJson($url, [
-            'name' => 'Updated Module',
-            'description' => 'Updated Description',
+            'name' => $this->faker->word,
+            'description' => $this->faker->sentence,
             'status' => 'published',
         ]);
 
         $response->assertStatus(200);
         $response->assertJsonFragment([
-            'name' => 'Updated Module',
-            'description' => 'Updated Description',
+            'name' => $response['name'],
+            'description' => $response['description'],
             'status' => 'published',
             'course_id' => $course->id,
         ]);
+    }
+
+    public function test_update_module_validation()
+    {
+        $course = Course::factory()->create();
+        $module = Module::factory()->create(['course_id' => $course->id]);
+
+        $url = $this->url($course) . '/' . $module->id;
+        $response = $this->putJson($url, [
+            'name' => '',
+            'description' => '',
+            'status' => '',
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJsonValidationErrors(['name', 'description', 'status']);
     }
 
     public function test_destroy_module()
