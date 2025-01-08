@@ -15,28 +15,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('videos', function (Blueprint $table) {
-            $videos = Video::all();
-            $courses = Course::all();
-            $videosToUpdate = [];
-
-            foreach ($videos as $video) {
-                $videosToUpdate[] = [
-                    'video_id' => $video->id,
-                    'course_id' => $video->course_id,
-                ];
-            }
-
-            $table->removeColumn('course_id');
             $table->foreignId('module_id')->constrained('modules');
-
-            foreach ($courses as $course) {
-                $module = new Module();
-                $module->course_id = $course->id;
-                $module->name = 'Módulo 1';
-                $module->description = 'Descrição do módulo 1';
-                $module->status = 'published';
-                $module->save();
-            }
         });
     }
 
