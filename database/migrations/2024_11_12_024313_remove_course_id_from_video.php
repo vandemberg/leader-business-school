@@ -26,7 +26,7 @@ return new class extends Migration {
                 ];
             }
 
-            $table->removeColumn('course_id');
+            // $table->removeColumn('course_id');
             $table->foreignId('module_id')->constrained('modules');
 
             foreach ($courses as $course) {
