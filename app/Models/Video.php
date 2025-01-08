@@ -17,7 +17,7 @@ class Video extends Model
         'transcription',
         'thumbnail',
         'time_in_seconds',
-        'course_id',
+        'module_id',
     ];
 
     public function course()
