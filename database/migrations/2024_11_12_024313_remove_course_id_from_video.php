@@ -37,12 +37,6 @@ return new class extends Migration {
                 $module->status = 'published';
                 $module->save();
             }
-
-            foreach ($videosToUpdate as $video) {
-                $video = Video::find($video['video_id']);
-                $video->module_id = Module::where('course_id', $video['course_id'])->first()->id;
-                $video->save();
-            }
         });
     }
 
