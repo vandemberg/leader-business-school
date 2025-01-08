@@ -21,12 +21,12 @@ return new class extends Migration {
 
             foreach ($videos as $video) {
                 $videosToUpdate[] = [
-                    'video_id' => $videos->id,
+                    'video_id' => $video->id,
                     'course_id' => $video->course_id,
                 ];
             }
 
-            // $table->removeColumn('course_id');
+            $table->removeColumn('course_id');
             $table->foreignId('module_id')->constrained('modules');
 
             foreach ($courses as $course) {
