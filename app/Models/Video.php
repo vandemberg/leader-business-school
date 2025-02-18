@@ -25,6 +25,11 @@ class Video extends Model
         return $this->belongsTo(Course::class);
     }
 
+    public function module()
+    {
+        return $this->belongsTo(Module::class);
+    }
+
     public function watchVideos()
     {
         return $this->hasMany(WatchVideo::class);

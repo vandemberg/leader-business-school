@@ -18,9 +18,7 @@ class DashboardController extends Controller
             if (strpos($course->thumbnail, 'thumbnails/') !== false) {
                 $course->thumbnail = url('/') . $course->thumbnail;
             }
-        });
 
-        $courses->each(function ($course) use ($user) {
             $videos = $course->modules()->with('videos')->get()->pluck('videos')->flatten();
             $totalVideos = $videos->count();
             $totalDone = WatchVideo::where('user_id', $user->id)

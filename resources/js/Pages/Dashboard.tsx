@@ -26,7 +26,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
                 Olá, {auth.user.name}!
             </p>
 
-            <div className='m-6 p-6 flex gap-4'>
+            <div className='m-6 p-6 flex gap-4 flex-wrap'>
                 {courses.map((course: any) => (
                     <Thumb key={course.id} course={course} />
                 ))}
