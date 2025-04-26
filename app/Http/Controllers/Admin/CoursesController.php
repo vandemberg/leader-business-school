@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\Controller;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use Storage;
@@ -82,6 +83,11 @@ class CoursesController extends Controller
 
     public function destroy(Course $course)
     {
+        foreach ($course->modules as $module) {
+            $module->videos()->delete();
+            $module->delete();
+        }
+
         $course->delete();
 
         return response()->noContent(status: 204);

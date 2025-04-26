@@ -15,7 +15,7 @@ class UsersController extends Controller
 
         $users = User::all();
 
-        if(isset($search) && $search != ''){
+        if (isset($search) && $search != '') {
             $users = User::where('name', 'like', '%' . $search . '%')
                 ->orWhere('email', 'like', '%' . $search . '%')
                 ->get();
@@ -35,9 +35,10 @@ class UsersController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|in:' . User::ROLE_ADMIN . ',' . User::ROLE_USER,
         ]);
 
-        $data['password'] = Hash::make($data['password']);
+        $data['password'] = bcrypt($data['password']);
         $user = User::create($data);
 
         return response()->json($user, 201);
@@ -49,6 +50,7 @@ class UsersController extends Controller
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|string|email|max:255|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8|confirmed',
+            'role' => 'sometimes|in:' . User::ROLE_ADMIN . ',' . User::ROLE_USER,
         ]);
 
         if (isset($data['password'])) {

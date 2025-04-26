@@ -22,8 +22,8 @@ return new class extends Migration {
     public function down()
     {
         Schema::table('courses', function (Blueprint $table) {
-            $table->enum('status', ['outdated', 'open', 'inprogress'])
-                ->default('draft')
+            $table->enum('status', ['draft', 'outdated', 'open', 'inprogress'])
+                ->default('inprogress')
                 ->change();
         });
     }

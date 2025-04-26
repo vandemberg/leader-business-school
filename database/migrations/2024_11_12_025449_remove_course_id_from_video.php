@@ -15,25 +15,25 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('video', function (Blueprint $table) {
-            // $courses = Course::all();
+            $courses = Course::all();
 
-            // foreach ($courses as $course) {
-            //     $module = new Module();
-            //     $module->course_id = $course->id;
-            //     $module->name = 'Módulo 1';
-            //     $module->description = 'Descrição do módulo 1';
-            //     $module->status = 'published';
-            //     $module->save();
-            // }
+            foreach ($courses as $course) {
+                $module = new Module();
+                $module->course_id = $course->id;
+                $module->name = 'Módulo 1';
+                $module->description = 'Descrição do módulo 1';
+                $module->status = 'published';
+                $module->save();
+            }
 
-            // Video::all()->each(function ($video) {
-            //     if(isset($video->id)) {
-            //         $module = $video->module()->first();
-            //         $course = $module->course()->first();
-            //         $video->course_id = $course->id;
-            //         $video->save();
-            //     }
-            // });
+            Video::all()->each(function ($video) {
+                if(isset($video->id)) {
+                    $module = $video->module()->first();
+                    $course = $module->course()->first();
+                    $video->course_id = $course->id;
+                    $video->save();
+                }
+            });
         });
     }
 

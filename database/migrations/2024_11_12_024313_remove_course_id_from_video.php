@@ -15,7 +15,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('videos', function (Blueprint $table) {
-            // $table->foreignId('module_id')->constrained('modules');
+            $table->foreignId('module_id')->constrained('modules');
         });
     }
 
