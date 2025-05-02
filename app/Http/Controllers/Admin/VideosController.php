@@ -46,6 +46,7 @@ class VideosController extends Controller
 
     public function destroy(Course $course, Module $module, Video $video)
     {
+        $video->watchVideos()->delete();
         $video->delete();
         return response()->noContent(status: 204);
     }
