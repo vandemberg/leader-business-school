@@ -36,6 +36,7 @@ class VideosController extends Controller
             'url' => 'string|max:255',
             'transcription' => 'nullable|string',
             'time_in_seconds' => 'nullable|integer',
+            'status' => 'nullable|in:draft,published',
         ]);
 
         $video->update($validatedData);

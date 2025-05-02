@@ -44,6 +44,8 @@ class ModulesController extends Controller
 
     public function destroy(Course $course, Module $module)
     {
+        $module->videos()->delete();
+
         $module->delete();
         return response()->json(status: 204);
     }
