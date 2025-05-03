@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Controller;
 use App\Models\Course;
 use App\Models\Module;
 use App\Models\Video;
+use App\Models\WatchVideo;
 use Illuminate\Http\Request;
 
 class VideosController extends Controller
@@ -46,7 +47,7 @@ class VideosController extends Controller
 
     public function destroy(Course $course, Module $module, Video $video)
     {
-        $video->watchVideos()->delete();
+        WatchVideo::where('video_id', $video->id)->delete();
         $video->delete();
         return response()->noContent(status: 204);
     }
