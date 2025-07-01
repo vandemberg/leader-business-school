@@ -38,6 +38,7 @@ class UsersControllerTest extends TestCase
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
+            'role' => User::ROLE_USER,
             'password_confirmation' => 'password',
         ];
 

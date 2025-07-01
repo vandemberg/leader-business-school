@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\VideoCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,10 +16,22 @@ class Video extends Model
         'url',
         'status',
         'transcription',
+        'newsletter_path',
         'thumbnail',
         'time_in_seconds',
         'module_id',
+        'course_id',
     ];
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (Video $video) {
+            event(new VideoCreated($video));
+        });
+    }
 
     public function course()
     {

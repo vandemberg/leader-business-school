@@ -16,6 +16,7 @@
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.4",
         "mailgun/mailgun-php": "^4.2",
+        "openai-php/client": "^0.10.1",
         "symfony/http-client": "^7.0",
         "symfony/mailgun-mailer": "^7.0",
         "tightenco/ziggy": "^2.0",

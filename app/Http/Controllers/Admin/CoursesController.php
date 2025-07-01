@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\Controller;
-use App\Models\Video;
 use Illuminate\Http\Request;
 use App\Models\Course;
 use Storage;
@@ -89,6 +88,20 @@ class CoursesController extends Controller
         }
 
         $course->delete();
+
+        return response()->noContent(status: 204);
+    }
+
+    public function disable(Course $course)
+    {
+        $course->update(['status' => Course::STATUS_DRAFT]);
+
+        return response()->noContent(status: 204);
+    }
+
+    public function enable(Course $course)
+    {
+        $course->update(['status' => Course::STATUS_IN_PROGRESS]);
 
         return response()->noContent(status: 204);
     }

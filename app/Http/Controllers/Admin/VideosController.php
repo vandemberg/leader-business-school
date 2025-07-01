@@ -6,7 +6,6 @@ use App\Http\Controllers\Admin\Controller;
 use App\Models\Course;
 use App\Models\Module;
 use App\Models\Video;
-use App\Models\WatchVideo;
 use Illuminate\Http\Request;
 
 class VideosController extends Controller
@@ -45,9 +44,21 @@ class VideosController extends Controller
         return response()->json($video, 200);
     }
 
+    public function disable(Course $course, Module $module, Video $video)
+    {
+        $video->update(['status' => 'draft']);
+        return response()->noContent(status: 204);
+    }
+
+    public function enable(Course $course, Module $module, Video $video)
+    {
+        $video->update(['status' => 'published']);
+        return response()->noContent(status: 204);
+    }
+
     public function destroy(Course $course, Module $module, Video $video)
     {
-        WatchVideo::where('video_id', $video->id)->delete();
+        $video->watchVideos()->delete();
         $video->delete();
         return response()->noContent(status: 204);
     }

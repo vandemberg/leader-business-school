@@ -14,8 +14,7 @@ class ShowCourseTest extends TestCase
 
     public function test_show_course_details()
     {
-        $course = CourseFactory::new()->withVideos()->create();
-
+        $course = CourseFactory::new()->create();
         $response = $this->get('/api/admin/courses/' . $course->id);
 
         $response->assertStatus(200);
