@@ -18,7 +18,11 @@ const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800  leading-tight">Cursos & Treinamentos</h2>}
+            header={
+                <h2 className="font-semibold text-xl text-gray-800  leading-tight">
+                    [Cursos]
+                </h2>
+            }
         >
             <Head title="Dashboard" />
 
@@ -26,7 +30,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
                 Olá, {auth.user.name}!
             </p>
 
-            <div className='m-6 p-6 flex gap-4 flex-wrap'>
+            <div className="m-6 p-6 flex gap-4 flex-wrap">
                 {courses.map((course: any) => (
                     <Thumb key={course.id} course={course} />
                 ))}

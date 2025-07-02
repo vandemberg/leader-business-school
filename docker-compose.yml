@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: lbs-platform-app
+    container_name: lbs-platform-app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./:/var/www
+    networks:
+      - lbs-platform
+
+  db:
+    image: mysql:8.0
+    container_name: lbs-platform-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./docker-compose/mysql:/var/lib/mysql
+    networks:
+      - lbs-platform
+
+  nginx:
+    image: nginx:alpine
+    container_name: lbs-platform-nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - lbs-platform
+
+  vite:
+    build:
+      context: .
+      dockerfile: Dockerfile.vite
+    container_name: lbs-platform-vite
+    restart: unless-stopped
+    working_dir: /var/www/
+    command: npm run dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/var/www
+      - /var/www/node_modules
+    networks:
+      - lbs-platform
+    environment:
+      - VITE_HOST=0.0.0.0
+      - VITE_PORT=5173
+
+networks:
+  lbs-platform:
+    driver: bridge

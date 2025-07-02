@@ -1,0 +1,27 @@
+# Dockerfile.vite
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /var/www
+
+# Install system dependencies for better performance
+RUN apk add --no-cache \
+    git \
+    python3 \
+    make \
+    g++
+
+# Copy package files
+COPY package*.json ./
+
+# Install npm dependencies
+RUN npm ci --only=production=false
+
+# Copy the rest of the application
+COPY . .
+
+# Expose Vite port
+EXPOSE 5173
+
+# Command to run Vite dev server
+CMD ["npm", "run", "dev"]
