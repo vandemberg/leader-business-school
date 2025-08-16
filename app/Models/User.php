@@ -36,6 +36,11 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+
+    public function platforms()
+    {
+        return $this->belongsToMany(Platform::class, 'platform_users', 'user_id', 'platform_id');
+    }
     protected $hidden = [
         'password',
         'remember_token',

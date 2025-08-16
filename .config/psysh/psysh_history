@@ -1,0 +1,43 @@
+exit
+User::first()->platforms();
+exit
+User::first()->platforms();
+User::first()->platforms()->toArray();
+User::first();
+User::first()->platforms();
+Platform::first();
+Platform
+Platform::first();
+use App\Platform;
+Platform::first();
+use App\Models\Platform;
+Platform::first();
+Platform::first()->users();
+Platform::first()->users()->count();
+exit
+Platform
+Platform::first();
+App\Models\Platform::first();
+App\Models\Platform::first()->destroy();
+App\Models\Platform::first()->delete();
+exit
+use App\Models\User;
+use Faker\Factory as Faker;
+$faker = Faker::create();
+foreach (range(1, 10) as $i) {
+    User::create([
+        'name' => $faker->name,
+        'email' => $faker->unique()->safeEmail,
+        'password' => bcrypt('secret'),
+    ]);
+}
+exit
+User::all()->count();
+User::all()->pluck('role');
+exit
+$platform = App\Models\Platform::last();
+$platform = App\Models\Platform::all()->last();
+$platform->users();
+$platform->users()->count();
+$platform->users()->pluck('name');
+exit

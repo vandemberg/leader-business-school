@@ -101,7 +101,7 @@ class CoursesController extends Controller
 
     public function enable(Course $course)
     {
-        $course->update(['status' => Course::STATUS_IN_PROGRESS]);
+        $course->update(['status' => Course::STATUS_COMPLETE]);
 
         return response()->noContent(status: 204);
     }

@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { usePage, Head } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Thumb } from "@/components/courses/thumb";
 
 interface Course {
@@ -20,7 +20,7 @@ const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800  leading-tight">
-                    [Cursos]
+                    Cursos & Treinamentos
                 </h2>
             }
         >
@@ -37,6 +37,6 @@ const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
             </div>
         </AuthenticatedLayout>
     );
-}
+};
 
 export default Dashboard;

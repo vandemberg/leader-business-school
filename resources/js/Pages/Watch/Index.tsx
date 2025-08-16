@@ -1,4 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import Linkify from "react-linkify";
+import ReactMarkdown from "react-markdown";
 import React from "react";
 import YouTube from "react-youtube";
 import { Head, router } from "@inertiajs/react";
@@ -22,6 +24,29 @@ interface CourseProps {
         icon: string;
     };
     auth: any;
+}
+
+function formatTextToUrl(url: string) {
+    let newUrl = url;
+    if (!url.startsWith("http")) {
+        newUrl = `https://${url}`;
+    }
+
+    return `<a href="${newUrl}" target="_blank" rel="noopener noreferrer">${newUrl}</a>`;
+}
+
+function urlMatch(text: string, url: string) {
+    return text.includes(url) ? formatTextToUrl(url) : text;
+}
+
+function parseDescription(description: string) {
+    return description
+        .split("\n")
+        .map((line) => {
+            const urlRegex = /(https?:\/\/[^\s]+)/g;
+            return line.replace(urlRegex, (url) => urlMatch(line, url));
+        })
+        .join("\n");
 }
 
 const Course: React.FC<CourseProps> = ({
@@ -103,7 +128,13 @@ const Course: React.FC<CourseProps> = ({
                 </div>
             </div>
 
-            <p className="pl-12">{currentVideo.description}</p>
+            <div className="w-3/4 p-2 max-h-[600px] overflow-y-auto">
+                <div className="pl-12 text-justify">
+                    <ReactMarkdown skipHtml>
+                        {parseDescription(currentVideo.description)}
+                    </ReactMarkdown>
+                </div>
+            </div>
         </AuthenticatedLayout>
     );
 };
