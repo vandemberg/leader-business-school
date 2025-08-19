@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { Thumb } from "@/components/courses/thumb";
 
@@ -12,15 +12,22 @@ interface Course {
 interface DashboardProps {
     auth: any;
     courses: Course[];
+    platform: PlatformProp;
 }
 
-const Dashboard: React.FC<DashboardProps> = ({ auth, courses }) => {
+interface PlatformProp {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ auth, courses, platform }) => {
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800  leading-tight">
-                    Cursos & Treinamentos
+                    {platform.name}
                 </h2>
             }
         >

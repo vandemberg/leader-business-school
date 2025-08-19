@@ -5,6 +5,7 @@ export default function Welcome({ auth, laravelVersion, phpVersion }: PageProps<
     return (
         <>
             <Head title="Welcome" />
+
             <div className="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100selection:bg-red-500 selection:text-white">
                 <div className="sm:fixed sm:top-0 sm:right-0 p-6 text-end">
                     {auth.user ? (
