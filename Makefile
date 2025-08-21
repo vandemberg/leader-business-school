@@ -2,7 +2,7 @@ up:
 	docker compose up -d
 
 test:
-	php artisan test
+	docker compose exec app php artisan test
 
 vite:
 	docker compose exec vite ssh

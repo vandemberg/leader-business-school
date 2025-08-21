@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\UseCase\Accounts\CreatePlatformUseCase;
+use App\UseCases\Accounts\CreatePlatformUseCase;
 use Illuminate\Console\Command;
 
 class CreateNewPlatform extends Command

@@ -1,17 +1,23 @@
 <?php
 
-namespace App\UseCase\Accounts;
+namespace App\UseCases\Accounts;
 
 use App\Models\Platform;
 use App\Models\User;
+use App\UseCases\IUseCase;
 use ErrorException;
 use \Illuminate\Support\Facades\DB;
 
-class CreatePlatformUseCase
+class CreatePlatformUseCase implements IUseCase
 {
 
-    public function execute(Platform $platform): Platform
+    public function execute($input = null): Platform
     {
+        if (empty($input)) {
+            throw new \InvalidArgumentException('Input is required');
+        }
+
+        $platform = $input['platform'] ?? null;
         DB::beginTransaction();
 
         try {

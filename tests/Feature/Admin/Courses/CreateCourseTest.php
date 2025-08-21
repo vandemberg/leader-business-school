@@ -13,9 +13,6 @@ class CreateCourseTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    /**
-     * Test creating a course with all attributes.
-     */
     public function test_create_with_all_attributes(): void
     {
         Storage::fake('public');
