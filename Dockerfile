@@ -32,6 +32,9 @@ RUN docker-php-ext-install pdo_mysql mbstring zip exif pcntl bcmath gd
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
+# Copy custom PHP configuration
+COPY ./docker-compose/php/php.ini /usr/local/etc/php/conf.d/uploads.ini
+
 # Copy existing application directory contents
 COPY . .
 

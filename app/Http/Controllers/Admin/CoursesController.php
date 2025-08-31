@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\Controller;
 use Illuminate\Http\Request;
 use App\Models\Course;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class CoursesController extends Controller
 {
@@ -19,7 +19,7 @@ class CoursesController extends Controller
 
         $courses = $query->get();
 
-        $courses->each(function ($course) {
+        $courses->each(function (Course $course) {
             $course->thumbnail = url('/') . $course->thumbnail;
         });
 
@@ -47,15 +47,20 @@ class CoursesController extends Controller
             'description' => 'required|string',
             'icon' => 'string',
             'color' => 'string',
+            'thumbnail' => 'nullable|file|mimes:jpeg,jpg,png,gif|max:20480', // 20MB
         ]);
 
         $course = new Course(attributes: $data);
         $course->status = Course::STATUS_DRAFT;
         $course->responsible_id = auth()->id();
-        $thumbnail = $this->registerThumbnail(request: $request, course: $course);
-        $course->thumbnail = $thumbnail;
-        $course->save();
+        $course->thumbnail = 'https://via.placeholder.com/500';
 
+        if ($request->hasFile('thumbnail')) {
+            $thumbnail = $this->registerThumbnail(request: $request, course: $course);
+            $course->thumbnail = $thumbnail;
+        }
+
+        $course->save();
 
         return response()->json(data: $course, status: 201);
     }
@@ -68,6 +73,7 @@ class CoursesController extends Controller
             'icon' => 'string',
             'color' => 'string',
             'status' => 'in:draft,inprogress,complete',
+            'thumbnail' => 'nullable|file|mimes:jpeg,jpg,png,gif|max:20480', // 20MB
         ]);
 
         if ($request->hasFile(key: 'thumbnail')) {
@@ -108,17 +114,13 @@ class CoursesController extends Controller
 
     private function registerThumbnail(Request $request, Course $course)
     {
-        if ($request->hasFile(key: 'thumbnail')) {
-            $file = $request->file(key: 'thumbnail');
-            $filename = 'thumbnail_' . $course->title . '.' . $file->getClientOriginalExtension();
-            $filename = str_replace(' ', '_', $filename);
-            $path = $file->storeAs(path: 'thumbnails', name: $filename, options: 'public');
+        $file = $request->file(key: 'thumbnail');
+        $filename = 'thumbnail_' . $course->title . '.' . $file->getClientOriginalExtension();
+        $filename = str_replace(' ', '_', $filename);
+        $path = $file->storeAs(path: 'thumbnails', name: $filename, options: 'public');
 
-            $url = Storage::url($path);
+        $url = Storage::url($path);
 
-            return $url;
-        }
-
-        return 'https://via.placeholder.com/500';
+        return $url;
     }
 }
