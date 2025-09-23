@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\PlatformUser;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
@@ -14,11 +16,20 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (!$token = auth('api')->attempt($credentials)) {
+
+        if (!auth('api')->validate($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        if (auth('api')->user()->role != User::ROLE_ADMIN) {
+        $user = User::where('email', $credentials['email'])->first();
+        $platformId = $user->current_platform_id;
+        if (empty($platformId)) {
+            $platformId = PlatformUser::where('user_id', $user->id)->value('platform_id');
+        }
+
+        $token = JWTAuth::claims(['platform_id' => $platformId])->fromUser($user);
+
+        if ($user->role != User::ROLE_ADMIN) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -28,7 +39,6 @@ class AuthController extends Controller
     public function logout()
     {
         auth('api')->logout();
-        Cookie::queue(Cookie::forget('admin_token'));
         return response()->json(['message' => 'Successfully logged out']);
     }
 
@@ -37,22 +47,9 @@ class AuthController extends Controller
         $response = response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60,
+            'expires_in' => config('jwt.ttl') * 60,
             'user' => auth('api')->user()
         ]);
-
-        // Set secure cookie with the token and 1 day expiration
-        $response->cookie(
-            'admin_token',
-            $token,
-            1440, // 24 hours in minutes
-            '/',
-            parse_url(env('FRONTEND_URL', 'http://localhost:3000'), PHP_URL_HOST),
-            true, // secure
-            true, // httpOnly
-            false, // raw
-            'Lax' // sameSite
-        );
 
         return $response;
     }

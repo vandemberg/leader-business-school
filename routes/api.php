@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\CoursesController;
 use App\Http\Controllers\Admin\ModulesController;
 use App\Http\Controllers\Admin\VideosController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TagCourseController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UsersController;
@@ -30,6 +32,16 @@ Route::prefix('admin')->group(function () {
         Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class);
         Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class);
         Route::resource('users', UsersController::class);
+
+        // Tags routes
+        Route::resource('tags', TagController::class);
+        Route::get('tags/{tag}/courses', [TagController::class, 'courses'])->name('admin.tags.courses');
+
+        // Tag-Course relationship routes
+        Route::resource('tag-courses', TagCourseController::class, ['except' => ['create', 'edit', 'update']]);
+        Route::delete('tag-courses/tag/{tagId}/course/{courseId}', [TagCourseController::class, 'destroyByTagAndCourse'])->name('admin.tag-courses.destroy-by-tag-and-course');
+        Route::get('courses/{course}/tags', [TagCourseController::class, 'getTagsByCourse'])->name('admin.courses.tags');
+        Route::get('tags/{tag}/courses', [TagCourseController::class, 'getCoursesByTag'])->name('admin.tags.courses');
     });
 });
 

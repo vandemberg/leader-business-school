@@ -71,4 +71,20 @@ class Course extends Model
     {
         return $this->hasManyThrough(Video::class, Module::class);
     }
+
+    /**
+     * Get the tag-course relationships for this course.
+     */
+    public function tagCourses()
+    {
+        return $this->hasMany(TagCourse::class);
+    }
+
+    /**
+     * Get the tags associated with this course through the pivot table.
+     */
+    public function tags()
+    {
+        return $this->belongsToMany(Tag::class, 'tag_courses');
+    }
 }
