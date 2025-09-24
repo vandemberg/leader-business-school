@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Course;
-use App\Models\Platform;
-use App\Models\PlatformUser;
 use App\Models\WatchVideo;
 use Inertia\Inertia;
-use Symfony\Component\HttpFoundation\Session\Session;
 
 class DashboardController extends Controller
 {
@@ -16,24 +13,8 @@ class DashboardController extends Controller
         $user = auth()->user();
         $allCourses = Course::all();
 
-        $session = new Session();
-        $platformId = $session->get('platform_id');
-
-        if (empty($platformId)) {
-            $userPlatform = PlatformUser::where('user_id', $user->id)
-                ->orderBy('created_at', 'desc')
-                ->first();
-
-            if (empty($platformId)) {
-                $platformId = Platform::first()->id;
-                PlatformUser::create([
-                    'user_id' => $user->id,
-                    'platform_id' => $platformId,
-                ]);
-            }
-        }
-
-        $platform = Platform::find($platformId);
+        // Usa o helper para obter plataforma atual (já garantida pelo middleware)
+        $platform = current_platform();
 
         $coursesWithProgress = collect();
         $coursesInProgress = collect();
