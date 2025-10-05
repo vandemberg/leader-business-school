@@ -3,36 +3,68 @@ import ApplicationLogo from '@/components/ApplicationLogo';
 import Dropdown from '@/components/Dropdown';
 import NavLink from '@/components/NavLink';
 import ResponsiveNavLink from '@/components/ResponsiveNavLink';
-import { Link } from '@inertiajs/react';
-import { User } from '@/types';
+import PlatformSelector from "@/components/PlatformSelector";
+import { Link, usePage } from "@inertiajs/react";
+import { User } from "@/types";
 
-export default function Authenticated({ user, header, children }: PropsWithChildren<{ user: User, header?: ReactNode }>) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+export default function Authenticated({
+    user,
+    header,
+    children,
+}: PropsWithChildren<{ user: User; header?: ReactNode }>) {
+    const [showingNavigationDropdown, setShowingNavigationDropdown] =
+        useState(false);
+    const { platform } = usePage().props as any;
 
     return (
         <div className="min-h-screen bg-gray-100 h-full flex flex-col justify-between">
             <div>
-                <nav className="bg-whiteborder-b border-gray-100">
+                <nav className="bg-white border-b border-gray-100">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
                             <div className="flex">
                                 <div className="shrink-0 flex items-center p-2">
-                                    <Link href="/dashboard" className='pt-6'>
+                                    <Link href="/dashboard" className="pt-6">
                                         <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
                                     </Link>
                                 </div>
 
                                 <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                    <NavLink href={route('dashboard')} active={route().current('dashboard')}>
+                                    <NavLink
+                                        href={route("dashboard")}
+                                        active={route().current("dashboard")}
+                                    >
                                         Dashboard
                                     </NavLink>
-                                    <NavLink href={route('courses.index')} active={route().current('courses.index')}>
+                                    <NavLink
+                                        href={route("courses.index")}
+                                        active={route().current(
+                                            "courses.index"
+                                        )}
+                                    >
                                         Catalogo de Cursos
                                     </NavLink>
-                                    <NavLink href={route('teachers.index')} active={route().current('teachers.index')}>
+                                    <NavLink
+                                        href={route("teachers.index")}
+                                        active={route().current(
+                                            "teachers.index"
+                                        )}
+                                    >
                                         Treinadores
                                     </NavLink>
                                 </div>
+
+                                {platform && (
+                                    <div className="flex items-center ml-8">
+                                        <PlatformSelector
+                                            platforms={platform.available}
+                                            currentPlatform={platform.current}
+                                            showSelector={
+                                                platform.show_selector
+                                            }
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             <div className="hidden sm:flex sm:items-center sm:ms-6">
@@ -63,8 +95,16 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                         </Dropdown.Trigger>
 
                                         <Dropdown.Content>
-                                            <Dropdown.Link href={route('profile.edit')}>Perfil</Dropdown.Link>
-                                            <Dropdown.Link href={route('logout')} method="post" as="button">
+                                            <Dropdown.Link
+                                                href={route("profile.edit")}
+                                            >
+                                                Perfil
+                                            </Dropdown.Link>
+                                            <Dropdown.Link
+                                                href={route("logout")}
+                                                method="post"
+                                                as="button"
+                                            >
                                                 Sair
                                             </Dropdown.Link>
                                         </Dropdown.Content>
@@ -74,19 +114,36 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
                             <div className="-me-2 flex items-center sm:hidden">
                                 <button
-                                    onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
+                                    onClick={() =>
+                                        setShowingNavigationDropdown(
+                                            (previousState) => !previousState
+                                        )
+                                    }
                                     className="inline-flex items-center justify-center p-2 rounded-md text-gray-400hover:text-gray-500hover:bg-gray-100focus:outline-none focus:bg-gray-100focus:text-gray-500transition duration-150 ease-in-out"
                                 >
-                                    <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <svg
+                                        className="h-6 w-6"
+                                        stroke="currentColor"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                    >
                                         <path
-                                            className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
+                                            className={
+                                                !showingNavigationDropdown
+                                                    ? "inline-flex"
+                                                    : "hidden"
+                                            }
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth="2"
                                             d="M4 6h16M4 12h16M4 18h16"
                                         />
                                         <path
-                                            className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
+                                            className={
+                                                showingNavigationDropdown
+                                                    ? "inline-flex"
+                                                    : "hidden"
+                                            }
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth="2"
@@ -98,15 +155,29 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                         </div>
                     </div>
 
-                    <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
+                    <div
+                        className={
+                            (showingNavigationDropdown ? "block" : "hidden") +
+                            " sm:hidden"
+                        }
+                    >
                         <div className="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
+                            <ResponsiveNavLink
+                                href={route("dashboard")}
+                                active={route().current("dashboard")}
+                            >
                                 Dashboard
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('courses.index')} active={route().current('courses.index')}>
+                            <ResponsiveNavLink
+                                href={route("courses.index")}
+                                active={route().current("courses.index")}
+                            >
                                 Cursos
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink href={route('teachers.index')} active={route().current('teachers.index')}>
+                            <ResponsiveNavLink
+                                href={route("teachers.index")}
+                                active={route().current("teachers.index")}
+                            >
                                 Treinadores
                             </ResponsiveNavLink>
                         </div>
@@ -116,12 +187,20 @@ export default function Authenticated({ user, header, children }: PropsWithChild
                                 <div className="font-medium text-base text-gray-800">
                                     {user.name}
                                 </div>
-                                <div className="font-medium text-sm text-gray-500">{user.email}</div>
+                                <div className="font-medium text-sm text-gray-500">
+                                    {user.email}
+                                </div>
                             </div>
 
                             <div className="mt-3 space-y-1">
-                                <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
-                                <ResponsiveNavLink method="post" href={route('logout')} as="button">
+                                <ResponsiveNavLink href={route("profile.edit")}>
+                                    Profile
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink
+                                    method="post"
+                                    href={route("logout")}
+                                    as="button"
+                                >
                                     Log Out
                                 </ResponsiveNavLink>
                             </div>
@@ -131,7 +210,9 @@ export default function Authenticated({ user, header, children }: PropsWithChild
 
                 {header && (
                     <header className="bg-whiteshadow border-b-2">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                            {header}
+                        </div>
                     </header>
                 )}
 
@@ -141,17 +222,18 @@ export default function Authenticated({ user, header, children }: PropsWithChild
             <footer className="bg-white shadow-sm mt-6 border-gray-100 border-t-2">
                 <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between flex-col">
-                        <div className="text-gray-500 text-center w-full"><strong>Entre em contato com a gente</strong> </div>
-                        <div className='text-sm text-gray-500 text-center w-full'>
+                        <div className="text-gray-500 text-center w-full">
+                            <strong>Entre em contato com a gente</strong>{" "}
+                        </div>
+                        <div className="text-sm text-gray-500 text-center w-full">
                             E-mail: leaderincompany@gmail.com
                         </div>
 
-                        <div className='text-sm text-gray-500 text-center w-full'>
+                        <div className="text-sm text-gray-500 text-center w-full">
                             Instagram: Jonatasllucas e Leaderincompany
                         </div>
 
-
-                        <div className='text-sm text-gray-500 text-center w-full'>
+                        <div className="text-sm text-gray-500 text-center w-full">
                             Telefone: (82) 9 9962-5561
                         </div>
                     </div>

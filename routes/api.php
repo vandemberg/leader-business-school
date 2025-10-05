@@ -42,6 +42,10 @@ Route::prefix('admin')->group(function () {
         Route::delete('tag-courses/tag/{tagId}/course/{courseId}', [TagCourseController::class, 'destroyByTagAndCourse'])->name('admin.tag-courses.destroy-by-tag-and-course');
         Route::get('courses/{course}/tags', [TagCourseController::class, 'getTagsByCourse'])->name('admin.courses.tags');
         Route::get('tags/{tag}/courses', [TagCourseController::class, 'getCoursesByTag'])->name('admin.tags.courses');
+
+        // Platform switching routes
+        Route::get('platforms', [App\Http\Controllers\PlatformController::class, 'index'])->name('admin.platforms.index');
+        Route::post('platforms/switch', [App\Http\Controllers\PlatformController::class, 'switch'])->name('admin.platforms.switch');
     });
 });
 

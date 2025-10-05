@@ -41,3 +41,11 @@ $platform->users();
 $platform->users()->count();
 $platform->users()->pluck('name');
 exit
+Platform::create(['name' => 'Draw as professional']);
+exit
+Platform::create(['name' => 'Draw as professional']);
+Platform::create(['name' => 'Draw as professional', 'slug' => 'draw']);
+$user = User::all()->last();
+$platform = Platform::all()->last();
+PlatformUser::create(['user_id' => $user->id, 'platform_id' => $platform->id]);
+exit

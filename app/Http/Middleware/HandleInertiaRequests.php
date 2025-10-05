@@ -35,10 +35,32 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'platform' => fn() => $this->getPlatformData($request),
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
+        ];
+    }
+
+    /**
+     * Get platform data for the authenticated user
+     */
+    private function getPlatformData(Request $request): ?array
+    {
+        if (!$request->user()) {
+            return null;
+        }
+
+        $user = $request->user();
+        $platforms = $user->platforms()
+            ->select('id', 'name', 'slug', 'brand')
+            ->get();
+
+        return [
+            'current' => current_platform(),
+            'available' => $platforms,
+            'show_selector' => $platforms->count() > 1,
         ];
     }
 }
