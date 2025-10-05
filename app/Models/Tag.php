@@ -10,7 +10,7 @@ class Tag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'platform_id'];
 
     /**
      * Get the tag-course relationships for this tag.

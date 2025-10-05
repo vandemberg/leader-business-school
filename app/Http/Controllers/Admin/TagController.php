@@ -35,7 +35,10 @@ class TagController extends Controller
             'name' => 'required|string|max:255|unique:tags,name',
         ]);
 
-        $tag = Tag::create($data);
+        $tag = Tag::create([
+            'name' => $data['name'],
+            'platform_id' => current_platform_id() ?? auth()->user()?->current_platform_id,
+        ]);
 
         return response()->json($tag, 201);
     }
@@ -57,7 +60,9 @@ class TagController extends Controller
             'name' => 'required|string|max:255|unique:tags,name,' . $tag->id,
         ]);
 
-        $tag->update($data);
+        $tag->update([
+            'name' => $data['name'],
+        ]);
 
         return response()->json($tag);
     }

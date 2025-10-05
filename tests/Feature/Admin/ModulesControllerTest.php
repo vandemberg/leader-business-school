@@ -20,6 +20,17 @@ class ModulesControllerTest extends TestCase
         $this->faker = Faker::create();
     }
 
+    public function test_index_modules(): void
+    {
+        $course = Course::factory()->create();
+        Module::factory()->count(3)->create(['course_id' => $course->id]);
+
+        $response = $this->getJson($this->url($course));
+
+        $response->assertStatus(200)
+            ->assertJsonCount(3);
+    }
+
     public function test_store_module()
     {
         $course = Course::factory()->create();

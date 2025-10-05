@@ -33,7 +33,7 @@ class UpdateCourseTest extends TestCase
         ];
 
         $response = $this->post(
-            uri: route('courses.update', $course),
+            uri: route('admin.courses.update', $course),
             data: $data,
             headers: [ 'Content-Type' => 'multipart/form-data' ]
         );
@@ -66,7 +66,7 @@ class UpdateCourseTest extends TestCase
             'status' => '',
         ];
 
-        $response = $this->post(route('courses.update', $course), $data, [
+        $response = $this->post(route('admin.courses.update', $course), $data, [
             'Content-Type' => 'multipart/form-data',
         ]);
 
