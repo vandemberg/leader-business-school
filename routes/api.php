@@ -29,13 +29,12 @@ Route::prefix('admin')->group(function () {
         Route::resource('teachers', App\Http\Controllers\Admin\TeachersController::class, ['except' => ['create', 'edit']]);
         Route::post('courses/{course}/update', [CoursesController::class, 'update'])->name('admin.courses.update');
         Route::post('courses/{course}/disable', [CoursesController::class, 'disable'])->name('admin.courses.disable');
-        Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class);
-        Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class);
-        Route::resource('users', UsersController::class);
+        Route::resource(name: '/courses/{course}/modules', controller: ModulesController::class, options: ['only' => ['index', 'store', 'update', 'destroy']]);
+        Route::resource(name: '/courses/{course}/modules/{module}/videos', controller: VideosController::class, options: ['only' => ['store', 'update', 'destroy']]);
+        Route::resource('users', UsersController::class, ['except' => ['create', 'edit']]);
 
         // Tags routes
-        Route::resource('tags', TagController::class);
-        Route::get('tags/{tag}/courses', [TagController::class, 'courses'])->name('admin.tags.courses');
+        Route::resource('tags', TagController::class, ['except' => ['create', 'edit']]);
 
         // Tag-Course relationship routes
         Route::resource('tag-courses', TagCourseController::class, ['except' => ['create', 'edit', 'update']]);
