@@ -61,7 +61,9 @@ const DashboardCourseCard: React.FC<DashboardCourseCardProps> = ({
                     href={`/courses/${course.id}/watch`}
                     className="w-full mt-4 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium py-2 px-3 rounded-md text-center transition-colors duration-200"
                 >
-                    Continuar Curso
+                    {course.progress === 100 || course.progress === 0
+                        ? "Assistir curso"
+                        : "Continuar curso"}
                 </Link>
             </div>
         </div>

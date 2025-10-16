@@ -54,7 +54,7 @@ class HandleInertiaRequests extends Middleware
 
         $user = $request->user();
         $platforms = $user->platforms()
-            ->select('id', 'name', 'slug', 'brand')
+            ->select('platforms.id', 'platforms.name', 'platforms.slug', 'platforms.brand')
             ->get();
 
         return [

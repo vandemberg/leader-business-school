@@ -1,6 +1,4 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import Linkify from "react-linkify";
-import ReactMarkdown from "react-markdown";
 import React from "react";
 import YouTube from "react-youtube";
 import { Head, router } from "@inertiajs/react";
@@ -130,9 +128,7 @@ const Course: React.FC<CourseProps> = ({
 
             <div className="w-3/4 p-2 max-h-[600px] overflow-y-auto">
                 <div className="pl-12 text-justify">
-                    <ReactMarkdown skipHtml>
-                        {parseDescription(currentVideo.description)}
-                    </ReactMarkdown>
+                    {parseDescription(currentVideo.description)}
                 </div>
             </div>
         </AuthenticatedLayout>
