@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Feature;
+namespace Tests\Feature\Admin;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -40,5 +40,19 @@ class AuthTest extends TestCase
         ]);
 
         $response->assertStatus(401);
+    }
+
+    public function test_refresh_returns_token_payload(): void
+    {
+        $response = $this->postJson('/api/admin/refresh');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'access_token',
+                'token_type',
+                'expires_in',
+                'user',
+                'platform_id',
+            ]);
     }
 }
