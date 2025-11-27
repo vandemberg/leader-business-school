@@ -1,244 +1,101 @@
-import { useState, PropsWithChildren, ReactNode } from 'react';
-import ApplicationLogo from '@/components/ApplicationLogo';
+import { PropsWithChildren } from 'react';
 import Dropdown from '@/components/Dropdown';
-import NavLink from '@/components/NavLink';
-import ResponsiveNavLink from '@/components/ResponsiveNavLink';
-import PlatformSelector from "@/components/PlatformSelector";
 import { Link, usePage } from "@inertiajs/react";
 import { User } from "@/types";
 
 export default function Authenticated({
     user,
-    header,
     children,
-}: PropsWithChildren<{ user: User; header?: ReactNode }>) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] =
-        useState(false);
+}: PropsWithChildren<{ user: User }>) {
     const { platform } = usePage().props as any;
 
     return (
-        <div className="min-h-screen bg-gray-100 h-full flex flex-col justify-between">
-            <div>
-                <nav className="bg-white border-b border-gray-100">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
-                            <div className="flex">
-                                <div className="shrink-0 flex items-center p-2">
-                                    <Link href="/dashboard" className="pt-6">
-                                        <ApplicationLogo className="block h-9 w-auto fill-current text-gray-800" />
-                                    </Link>
-                                </div>
-
-                                <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                    <NavLink
-                                        href={route("dashboard")}
-                                        active={route().current("dashboard")}
-                                    >
-                                        Dashboard
-                                    </NavLink>
-                                    <NavLink
-                                        href={route("courses.index")}
-                                        active={route().current(
-                                            "courses.index"
-                                        )}
-                                    >
-                                        Catalogo de Cursos
-                                    </NavLink>
-                                    <NavLink
-                                        href={route("teachers.index")}
-                                        active={route().current(
-                                            "teachers.index"
-                                        )}
-                                    >
-                                        Treinadores
-                                    </NavLink>
-                                </div>
-
-                                {platform && (
-                                    <div className="flex items-center ml-8">
-                                        <PlatformSelector
-                                            platforms={platform.available}
-                                            currentPlatform={platform.current}
-                                            showSelector={
-                                                platform.show_selector
-                                            }
-                                        />
-                                    </div>
-                                )}
-                            </div>
-
-                            <div className="hidden sm:flex sm:items-center sm:ms-6">
-                                <div className="ms-3 relative">
-                                    <Dropdown>
-                                        <Dropdown.Trigger>
-                                            <span className="inline-flex rounded-md">
-                                                <button
-                                                    type="button"
-                                                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500bg-whitehover:text-gray-700focus:outline-none transition ease-in-out duration-150"
-                                                >
-                                                    {user.name}
-
-                                                    <svg
-                                                        className="ms-2 -me-0.5 h-4 w-4"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20"
-                                                        fill="currentColor"
-                                                    >
-                                                        <path
-                                                            fillRule="evenodd"
-                                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                            clipRule="evenodd"
-                                                        />
-                                                    </svg>
-                                                </button>
-                                            </span>
-                                        </Dropdown.Trigger>
-
-                                        <Dropdown.Content>
-                                            <Dropdown.Link
-                                                href={route("profile.edit")}
-                                            >
-                                                Perfil
-                                            </Dropdown.Link>
-                                            <Dropdown.Link
-                                                href={route("logout")}
-                                                method="post"
-                                                as="button"
-                                            >
-                                                Sair
-                                            </Dropdown.Link>
-                                        </Dropdown.Content>
-                                    </Dropdown>
-                                </div>
-                            </div>
-
-                            <div className="-me-2 flex items-center sm:hidden">
-                                <button
-                                    onClick={() =>
-                                        setShowingNavigationDropdown(
-                                            (previousState) => !previousState
-                                        )
-                                    }
-                                    className="inline-flex items-center justify-center p-2 rounded-md text-gray-400hover:text-gray-500hover:bg-gray-100focus:outline-none focus:bg-gray-100focus:text-gray-500transition duration-150 ease-in-out"
-                                >
-                                    <svg
-                                        className="h-6 w-6"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            className={
-                                                !showingNavigationDropdown
-                                                    ? "inline-flex"
-                                                    : "hidden"
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M4 6h16M4 12h16M4 18h16"
-                                        />
-                                        <path
-                                            className={
-                                                showingNavigationDropdown
-                                                    ? "inline-flex"
-                                                    : "hidden"
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                            </div>
+        <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
+            <div className="layout-container flex h-full grow flex-col">
+                <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-10 lg:px-20 py-4 sticky top-0 z-50 bg-background-dark/80 backdrop-blur-sm">
+                    <div className="flex items-center gap-4 text-white">
+                        <div className="size-6 text-primary">
+                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                            </svg>
                         </div>
+                        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] font-heading">
+                            {platform?.current?.name || 'Leader Business School'}
+                        </h2>
                     </div>
-
-                    <div
-                        className={
-                            (showingNavigationDropdown ? "block" : "hidden") +
-                            " sm:hidden"
-                        }
-                    >
-                        <div className="pt-2 pb-3 space-y-1">
-                            <ResponsiveNavLink
-                                href={route("dashboard")}
-                                active={route().current("dashboard")}
-                            >
-                                Dashboard
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                href={route("courses.index")}
-                                active={route().current("courses.index")}
-                            >
-                                Cursos
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink
-                                href={route("teachers.index")}
-                                active={route().current("teachers.index")}
-                            >
-                                Treinadores
-                            </ResponsiveNavLink>
+                    <nav className="hidden md:flex flex-1 justify-center items-center gap-9">
+                        <Link
+                            href={route("dashboard")}
+                            className={`text-sm font-medium leading-normal transition-colors ${
+                                route().current("dashboard")
+                                    ? "text-white border-b-2 border-primary pb-1 font-bold"
+                                    : "text-white/70 hover:text-white"
+                            }`}
+                        >
+                            Home
+                        </Link>
+                        <Link
+                            href={route("courses.index")}
+                            className={`text-sm font-medium leading-normal transition-colors ${
+                                route().current("courses.index")
+                                    ? "text-white border-b-2 border-primary pb-1 font-bold"
+                                    : "text-white/70 hover:text-white"
+                            }`}
+                        >
+                            Meus Cursos
+                        </Link>
+                        <Link
+                            href={route("teachers.index")}
+                            className={`text-sm font-medium leading-normal transition-colors ${
+                                route().current("teachers.index")
+                                    ? "text-white border-b-2 border-primary pb-1 font-bold"
+                                    : "text-white/70 hover:text-white"
+                            }`}
+                        >
+                            Comunidade
+                        </Link>
+                        <a
+                            href="#"
+                            className="text-white/70 hover:text-white transition-colors text-sm font-medium leading-normal"
+                        >
+                            Ajuda
+                        </a>
+                    </nav>
+                    <div className="flex items-center gap-4">
+                        <div className="flex gap-2">
+                            <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined text-xl">notifications</span>
+                            </button>
+                            <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined text-xl">settings</span>
+                            </button>
                         </div>
-
-                        <div className="pt-4 pb-1 border-t border-gray-200">
-                            <div className="px-4">
-                                <div className="font-medium text-base text-gray-800">
-                                    {user.name}
-                                </div>
-                                <div className="font-medium text-sm text-gray-500">
-                                    {user.email}
-                                </div>
-                            </div>
-
-                            <div className="mt-3 space-y-1">
-                                <ResponsiveNavLink href={route("profile.edit")}>
-                                    Profile
-                                </ResponsiveNavLink>
-                                <ResponsiveNavLink
-                                    method="post"
+                        <Dropdown>
+                            <Dropdown.Trigger>
+                                <button className="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </button>
+                            </Dropdown.Trigger>
+                            <Dropdown.Content>
+                                <Dropdown.Link href={route("profile.edit")}>
+                                    Perfil
+                                </Dropdown.Link>
+                                <Dropdown.Link
                                     href={route("logout")}
+                                    method="post"
                                     as="button"
                                 >
-                                    Log Out
-                                </ResponsiveNavLink>
-                            </div>
-                        </div>
+                                    Sair
+                                </Dropdown.Link>
+                            </Dropdown.Content>
+                        </Dropdown>
                     </div>
-                </nav>
+                </header>
 
-                {header && (
-                    <header className="bg-whiteshadow border-b-2">
-                        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                            {header}
-                        </div>
-                    </header>
-                )}
-
-                <main>{children}</main>
+                <main className="px-4 sm:px-10 lg:px-20 flex flex-1 justify-center py-10">
+                    {children}
+                </main>
             </div>
-
-            <footer className="bg-white shadow-sm mt-6 border-gray-100 border-t-2">
-                <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between flex-col">
-                        <div className="text-gray-500 text-center w-full">
-                            <strong>Entre em contato com a gente</strong>{" "}
-                        </div>
-                        <div className="text-sm text-gray-500 text-center w-full">
-                            E-mail: leaderincompany@gmail.com
-                        </div>
-
-                        <div className="text-sm text-gray-500 text-center w-full">
-                            Instagram: Jonatasllucas e Leaderincompany
-                        </div>
-
-                        <div className="text-sm text-gray-500 text-center w-full">
-                            Telefone: (82) 9 9962-5561
-                        </div>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 }
