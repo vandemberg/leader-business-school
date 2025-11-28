@@ -19,6 +19,9 @@ export default {
                 "background-light": "#f6f6f8",
                 "background-dark": "#101622",
                 "surface-dark": "#1A1A2E",
+                "border-dark": "#2A2A35",
+                "text-primary-dark": "#FFFFFF",
+                "text-secondary-dark": "#A0A0B0",
             },
             fontFamily: {
                 sans: ["Inter", ...defaultTheme.fontFamily.sans],

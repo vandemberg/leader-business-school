@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Course extends Model
 {
@@ -20,6 +21,7 @@ class Course extends Model
         'status',
         'thumbnail',
         'responsible_id',
+        'platform_id',
     ];
 
     use HasFactory;
@@ -86,5 +88,13 @@ class Course extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tag_courses');
+    }
+
+    /**
+     * Get the platform that owns the course.
+     */
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
     }
 }

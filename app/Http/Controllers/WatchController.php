@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\WatchVideo;
+use App\Models\VideoComment;
+use App\Models\VideoRating;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Video;
@@ -20,21 +22,71 @@ class WatchController extends Controller
     public function show(Course $course, Video $video)
     {
         $user = auth()->user();
-        $currentVideo = Video::where('id', $video->id)->first();
-        $videos = $course->videos()->get()->each(function ($video) use ($user) {
-            $video->watched = WatchVideo::where('user_id', $user->id)
-                ->where('video_id', $video->id)
-                ->where('user_id', $user->id)
-                ->exists();
-        });
+        $currentVideo = Video::where('id', $video->id)
+            ->with(['module', 'course'])
+            ->first();
 
+        $videos = $course->videos()
+            ->with('module')
+            ->orderBy('id')
+            ->get()
+            ->map(function ($video) use ($user) {
+                $watched = WatchVideo::where('user_id', $user->id)
+                    ->where('video_id', $video->id)
+                    ->where('status', WatchVideo::STATUS_WATCHED)
+                    ->exists();
+
+                return [
+                    'id' => $video->id,
+                    'title' => $video->title,
+                    'description' => $video->description,
+                    'url' => $video->url,
+                    'time_in_seconds' => $video->time_in_seconds,
+                    'watched' => $watched,
+                    'module' => $video->module ? [
+                        'id' => $video->module->id,
+                        'name' => $video->module->name,
+                    ] : null,
+                ];
+            });
 
         $this->createWatchVideo($currentVideo);
 
+        // Get user rating for current video
+        $userRating = VideoRating::where('video_id', $currentVideo->id)
+            ->where('user_id', $user->id)
+            ->first();
+
+        // Get comments count
+        $commentsCount = VideoComment::where('video_id', $currentVideo->id)->count();
+
+        // Calculate progress
+        $totalVideos = $videos->count();
+        $completedVideos = $videos->filter(fn($v) => $v['watched'])->count();
+        $progress = $totalVideos > 0 ? round(($completedVideos / $totalVideos) * 100) : 0;
+
         return Inertia::render('Watch/Index', [
-            'course' => $course,
-            'currentVideo' => $currentVideo,
+            'course' => [
+                'id' => $course->id,
+                'title' => $course->title,
+                'description' => $course->description,
+                'thumbnail' => $course->thumbnail,
+            ],
+            'currentVideo' => [
+                'id' => $currentVideo->id,
+                'title' => $currentVideo->title,
+                'description' => $currentVideo->description,
+                'url' => $currentVideo->url,
+                'time_in_seconds' => $currentVideo->time_in_seconds,
+                'module' => $currentVideo->module ? [
+                    'id' => $currentVideo->module->id,
+                    'name' => $currentVideo->module->name,
+                ] : null,
+            ],
             'videos' => $videos,
+            'userRating' => $userRating,
+            'commentsCount' => $commentsCount,
+            'progress' => $progress,
         ]);
     }
 
@@ -45,14 +97,27 @@ class WatchController extends Controller
             ->where('video_id', $video->id)
             ->first();
 
-        if ($watchVideo) {
-            $watchVideo->update([
-                'status' => WatchVideo::STATUS_WATCHED,
-                'finished_at' => now(),
-            ]);
+        if ($watchVideo && $watchVideo->status === WatchVideo::STATUS_WATCHED) {
+            // Se já está concluído, desmarca (deleta o registro)
+            $watchVideo->delete();
+            return response()->json(['message' => 'Video uncompleted', 'completed' => false]);
+        } else {
+            // Se não está concluído, marca como concluído
+            if ($watchVideo) {
+                $watchVideo->update([
+                    'status' => WatchVideo::STATUS_WATCHED,
+                    'finished_at' => now(),
+                ]);
+            } else {
+                WatchVideo::create([
+                    'user_id' => $user->id,
+                    'video_id' => $video->id,
+                    'status' => WatchVideo::STATUS_WATCHED,
+                    'finished_at' => now(),
+                ]);
+            }
+            return response()->json(['message' => 'Video completed', 'completed' => true]);
         }
-
-        return response()->json(['message' => 'Video completed']);
     }
 
     private function createWatchVideo(Video $video)

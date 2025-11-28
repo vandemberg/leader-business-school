@@ -17,6 +17,7 @@ interface DashboardProps {
     auth: any;
     coursesInProgress: Course[];
     allCourses: Course[];
+    coursesInProgressForGrid: Course[];
     globalProgress: number;
     totalHoursWatched: number;
     platform: PlatformProp;
@@ -32,6 +33,7 @@ const Dashboard: React.FC<DashboardProps> = ({
     auth,
     coursesInProgress,
     allCourses,
+    coursesInProgressForGrid,
     globalProgress,
     totalHoursWatched,
     platform
@@ -152,7 +154,20 @@ const Dashboard: React.FC<DashboardProps> = ({
                                         </Link>
                                     ))
                                 ) : (
-                                    <p className="text-[#A0A0A0] text-sm">Nenhum curso em progresso</p>
+                                    <div className="flex flex-col items-center justify-center py-8">
+                                        <span className="material-symbols-outlined text-white/30 text-4xl mb-2">
+                                            school
+                                        </span>
+                                        <p className="text-[#A0A0A0] text-sm text-center">
+                                            Nenhum curso recente
+                                        </p>
+                                        <Link
+                                            href={route("courses.index")}
+                                            className="mt-4 text-primary hover:text-secondary text-sm font-medium transition-colors"
+                                        >
+                                            Explorar cursos →
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -235,14 +250,14 @@ const Dashboard: React.FC<DashboardProps> = ({
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {allCourses.length > 0 ? (
-                            allCourses.map((course) => (
+                        {coursesInProgressForGrid.length > 0 ? (
+                            coursesInProgressForGrid.map((course) => (
                                 <PremiumCourseCard key={course.id} course={course} />
                             ))
                         ) : (
                             <div className="col-span-full bg-surface-dark rounded-xl p-8 text-center border border-white/10">
                                 <p className="text-[#A0A0A0] text-lg">
-                                    Nenhum curso disponível no momento.
+                                    Nenhum curso em progresso no momento.
                                 </p>
                                 <Link
                                     href={route("courses.index")}

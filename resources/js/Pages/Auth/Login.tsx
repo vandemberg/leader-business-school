@@ -1,10 +1,5 @@
-import { useEffect, FormEventHandler } from 'react';
-import Checkbox from '@/components/Checkbox';
-import GuestLayout from '@/Layouts/GuestLayout';
+import { useEffect, FormEventHandler, useState } from 'react';
 import InputError from '@/components/InputError';
-import InputLabel from '@/components/InputLabel';
-import PrimaryButton from '@/components/PrimaryButton';
-import TextInput from '@/components/TextInput';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Login({ status, canResetPassword }: { status?: string, canResetPassword: boolean }) {
@@ -13,6 +8,8 @@ export default function Login({ status, canResetPassword }: { status?: string, c
         password: '',
         remember: false,
     });
+
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -27,71 +24,218 @@ export default function Login({ status, canResetPassword }: { status?: string, c
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <div className="min-h-screen flex bg-background-dark">
+            <Head title="Login" />
 
-            {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
-
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="E-mail" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
+            {/* Left side - Background image section */}
+            <div className="hidden lg:flex lg:w-2/5 relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-purple-900/80 via-blue-900/80 to-purple-800/80">
+                    {/* Abstract gradient lines */}
+                    <div className="absolute inset-0">
+                        <div className="absolute top-0 left-0 w-full h-full">
+                            <svg className="w-full h-full" viewBox="0 0 400 800" preserveAspectRatio="none">
+                                <path
+                                    d="M0,100 Q200,50 400,150 T400,300 Q200,250 0,350 T0,600 Q200,550 400,650 T400,800"
+                                    stroke="url(#gradient1)"
+                                    strokeWidth="3"
+                                    fill="none"
+                                    className="opacity-60"
+                                />
+                                <path
+                                    d="M0,200 Q200,150 400,250 T400,400 Q200,350 0,450 T0,700 Q200,650 400,750"
+                                    stroke="url(#gradient2)"
+                                    strokeWidth="2"
+                                    fill="none"
+                                    className="opacity-40"
+                                />
+                                <defs>
+                                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#EC4899" stopOpacity="0.8" />
+                                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.4" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.6" />
+                                        <stop offset="100%" stopColor="#6366F1" stopOpacity="0.3" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
                 </div>
+            </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Senha" />
+            {/* Right side - Login form section */}
+            <div className="flex-1 lg:w-3/5 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12 bg-background-dark">
+                <div className="w-full max-w-md mx-auto">
+                    {/* Header */}
+                    <div className="mb-8">
+                        <h1 className="text-5xl font-bold text-white mb-2 font-heading">LBS</h1>
+                        <p className="text-white/80 text-lg">Leader Business School</p>
+                    </div>
 
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
+                    {/* Welcome message */}
+                    <div className="mb-8">
+                        <h2 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h2>
+                        <p className="text-white/70 text-base">
+                            Acesse sua conta para continuar seus estudos.
+                        </p>
+                    </div>
 
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="block mt-4">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
-                        />
-                        <span className="ms-2 text-sm text-gray-600">Lembrar acesso</span>
-                    </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="underline text-sm text-gray-600hover:text-gray-900rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        >
-                            Esqueceu a senha?
-                        </Link>
+                    {/* Status message */}
+                    {status && (
+                        <div className="mb-4 font-medium text-sm text-green-400 bg-green-900/20 border border-green-500/30 rounded-lg px-4 py-3">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Acessar
-                    </PrimaryButton>
+                    {/* Login form */}
+                    <form onSubmit={submit} className="space-y-6">
+                        {/* Email field */}
+                        <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                                E-mail
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg
+                                        className="h-5 w-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    value={data.email}
+                                    className="block w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                    placeholder="seuemail@exemplo.com"
+                                    autoComplete="username"
+                                    autoFocus
+                                    onChange={(e) => setData('email', e.target.value)}
+                                />
+                            </div>
+                            <InputError message={errors.email} className="mt-2" />
+                        </div>
+
+                        {/* Password field */}
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label htmlFor="password" className="block text-sm font-medium text-white">
+                                    Senha
+                                </label>
+                                {canResetPassword && (
+                                    <Link
+                                        href={route('password.request')}
+                                        className="text-sm text-primary hover:text-primary/80 transition"
+                                    >
+                                        Esqueceu a senha?
+                                    </Link>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <svg
+                                        className="h-5 w-5 text-gray-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                                        />
+                                    </svg>
+                                </div>
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    name="password"
+                                    value={data.password}
+                                    className="block w-full pl-12 pr-12 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
+                                    placeholder="Digite sua senha"
+                                    autoComplete="current-password"
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <button
+                                    type="button"
+                                    className="absolute inset-y-0 right-0 pr-4 flex items-center"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? (
+                                        <svg
+                                            className="h-5 w-5 text-gray-400 hover:text-gray-300 transition"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.736m0 0L21 21"
+                                            />
+                                        </svg>
+                                    ) : (
+                                        <svg
+                                            className="h-5 w-5 text-gray-400 hover:text-gray-300 transition"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                            />
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                            />
+                                        </svg>
+                                    )}
+                                </button>
+                            </div>
+                            <InputError message={errors.password} className="mt-2" />
+                        </div>
+
+                        {/* Submit button */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            {processing ? 'Entrando...' : 'Entrar'}
+                        </button>
+                    </form>
+
+                    {/* Registration link */}
+                    <div className="mt-6 text-center">
+                        <p className="text-white/70 text-sm">
+                            Não tem uma conta?{' '}
+                            <Link
+                                href={'#'}
+                                className="text-primary hover:text-primary/80 font-medium transition"
+                            >
+                                Crie uma conta
+                            </Link>
+                        </p>
+                    </div>
                 </div>
-            </form>
-        </GuestLayout>
+            </div>
+        </div>
     );
 }

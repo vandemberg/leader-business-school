@@ -45,21 +45,25 @@ export default function Authenticated({
                             Meus Cursos
                         </Link>
                         <Link
-                            href={route("teachers.index")}
+                            href={route("community.index")}
                             className={`text-sm font-medium leading-normal transition-colors ${
-                                route().current("teachers.index")
+                                route().current("community.index")
                                     ? "text-white border-b-2 border-primary pb-1 font-bold"
                                     : "text-white/70 hover:text-white"
                             }`}
                         >
                             Comunidade
                         </Link>
-                        <a
-                            href="#"
-                            className="text-white/70 hover:text-white transition-colors text-sm font-medium leading-normal"
+                        <Link
+                            href={route("help.index")}
+                            className={`text-sm font-medium leading-normal transition-colors ${
+                                route().current("help.index") || route().current("help.*")
+                                    ? "text-white border-b-2 border-primary pb-1 font-bold"
+                                    : "text-white/70 hover:text-white"
+                            }`}
                         >
                             Ajuda
-                        </a>
+                        </Link>
                     </nav>
                     <div className="flex items-center gap-4">
                         <div className="flex gap-2">

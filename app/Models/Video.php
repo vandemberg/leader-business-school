@@ -60,4 +60,24 @@ class Video extends Model
 
         return 'pending';
     }
+
+    public function comments()
+    {
+        return $this->hasMany(VideoComment::class);
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(VideoRating::class);
+    }
+
+    public function averageRating()
+    {
+        return $this->ratings()->avg('rating') ?? 0;
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(VideoReport::class);
+    }
 }

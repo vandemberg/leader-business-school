@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "@inertiajs/react";
 import images from "../../utils/images";
 
@@ -20,8 +20,6 @@ function selectThumbnail(course: any) {
 }
 
 const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({ course }) => {
-    const [isHovered, setIsHovered] = useState(false);
-
     const getStatusBadge = () => {
         if (course.progress === 100) {
             return { text: "CONCLUÍDO", className: "bg-green-500/80" };
@@ -36,10 +34,9 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({ course }) => {
     const thumbnail = selectThumbnail(course);
 
     return (
-        <div
-            className="group relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-surface-dark transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
+        <Link
+            href={`/courses/${course.id}/watch`}
+            className="relative flex flex-col overflow-hidden rounded-xl border border-white/10 bg-surface-dark cursor-pointer"
         >
             {/* Image */}
             <div className="relative">
@@ -75,12 +72,11 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({ course }) => {
                         style={{ width: `${course.progress || 0}%` }}
                     ></div>
                 </div>
-                <Link
-                    href={`/courses/${course.id}/watch`}
-                    className={`w-full flex items-center justify-center gap-2 h-11 rounded-lg text-white font-bold text-sm transition-opacity ${
+                <div
+                    className={`w-full flex items-center justify-center gap-2 h-11 rounded-lg text-white font-bold text-sm ${
                         course.progress === 100
-                            ? "bg-white/10 hover:bg-white/20"
-                            : "gradient-button hover:opacity-90"
+                            ? "bg-white/10"
+                            : "gradient-button"
                     }`}
                 >
                     <span className="material-symbols-outlined">
@@ -91,23 +87,9 @@ const PremiumCourseCard: React.FC<PremiumCourseCardProps> = ({ course }) => {
                         : course.progress > 0
                         ? "Continuar Curso"
                         : "Iniciar Curso"}
-                </Link>
+                </div>
             </div>
-
-            {/* Hover Overlay */}
-            <div
-                className={`absolute inset-0 bg-surface-dark/95 backdrop-blur-sm p-5 transition-opacity duration-300 flex flex-col justify-center ${
-                    isHovered ? "opacity-100" : "opacity-0"
-                }`}
-            >
-                <h3 className="text-xl font-bold font-heading text-white mb-2">
-                    {course.title}
-                </h3>
-                <p className="text-sm text-[#A0A0A0] leading-relaxed">
-                    {course.description}
-                </p>
-            </div>
-        </div>
+        </Link>
     );
 };
 

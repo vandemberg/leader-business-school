@@ -11,10 +11,15 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $allCourses = Course::all();
-
-        // Usa o helper para obter plataforma atual (já garantida pelo middleware)
+        $platformId = current_platform_id();
         $platform = current_platform();
+
+        // Filter courses by platform
+        $coursesQuery = Course::query();
+        if ($platformId) {
+            $coursesQuery->where('platform_id', $platformId);
+        }
+        $allCourses = $coursesQuery->get();
 
         $coursesWithProgress = collect();
         $coursesInProgress = collect();
@@ -34,14 +39,14 @@ class DashboardController extends Controller
         $allCoursesWithProgress->each(function ($course) use (&$totalVideos, &$totalCompletedVideos, &$totalHoursWatched, $user) {
             $videos = $course->modules()->with('videos')->get()->pluck('videos')->flatten();
             $totalVideos += $videos->count();
-            
+
             $completedVideos = WatchVideo::where('user_id', $user->id)
                 ->whereIn('video_id', $videos->pluck('id'))
                 ->where('status', WatchVideo::STATUS_WATCHED)
                 ->get();
-            
+
             $totalCompletedVideos += $completedVideos->count();
-            
+
             // Calculate hours watched from completed videos
             $completedVideoIds = $completedVideos->pluck('video_id');
             $watchedVideos = $videos->whereIn('id', $completedVideoIds);
@@ -51,20 +56,52 @@ class DashboardController extends Controller
         $globalProgress = $totalVideos > 0 ? round(($totalCompletedVideos / $totalVideos) * 100, 0) : 0;
         $totalHoursWatched = round($totalHoursWatched, 0);
 
-        // Recent courses (in progress)
-        $coursesInProgress = $coursesWithProgress
-            ->filter(function ($course) {
-                return $course->progress > 0 && $course->progress < 100;
-            })
-            ->sortByDesc('progress')
-            ->take(3);
+        // Recent courses - based on last access time (when user last watched a video from the course)
+        // If no videos watched, use course updated_at
+        $recentCourses = $allCoursesWithProgress->map(function ($course) use ($user) {
+            $videos = $course->modules()->with('videos')->get()->pluck('videos')->flatten();
+            $videoIds = $videos->pluck('id');
+
+            // Get the most recent watch video for this course
+            $lastWatchVideo = WatchVideo::where('user_id', $user->id)
+                ->whereIn('video_id', $videoIds)
+                ->orderBy('updated_at', 'desc')
+                ->first();
+
+            // Set last accessed time: use watch video updated_at if exists, otherwise use course updated_at
+            if ($lastWatchVideo) {
+                $course->lastAccessedAt = $lastWatchVideo->updated_at;
+                $course->hasBeenAccessed = true;
+            } else {
+                $course->lastAccessedAt = $course->updated_at;
+                $course->hasBeenAccessed = false;
+            }
+
+            return $course;
+        })
+        ->sortByDesc(function ($course) {
+            // Prioritize courses that have been accessed, then sort by date
+            $priority = $course->hasBeenAccessed ? 1000000 : 0;
+            return $priority + ($course->lastAccessedAt ? $course->lastAccessedAt->timestamp : 0);
+        })
+        ->take(3)
+        ->values();
 
         // All courses for the grid
         $allCoursesForGrid = $allCoursesWithProgress->sortByDesc('updated_at');
 
+        // Courses in progress (progress > 0 and < 100)
+        $coursesInProgressForGrid = $allCoursesWithProgress
+            ->filter(function ($course) {
+                return $course->progress > 0 && $course->progress < 100;
+            })
+            ->sortByDesc('updated_at')
+            ->values();
+
         return Inertia::render('Dashboard')
-            ->with('coursesInProgress', $coursesInProgress)
+            ->with('coursesInProgress', $recentCourses)
             ->with('allCourses', $allCoursesForGrid)
+            ->with('coursesInProgressForGrid', $coursesInProgressForGrid)
             ->with('globalProgress', $globalProgress)
             ->with('totalHoursWatched', $totalHoursWatched)
             ->with('platform', $platform);
