@@ -112,7 +112,7 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
             <div className="layout-content-container flex flex-col w-full max-w-7xl flex-1 gap-10">
                 {/* Header Section */}
                 <section className="text-center">
-                    <h1 className="text-4xl md:text-5xl font-black font-heading tracking-[-0.033em] mb-3">
+                    <h1 className="text-4xl md:text-5xl font-black font-heading tracking-[-0.033em] mb-3 text-white">
                         Bem-vindo à <span className="gradient-text">Comunidade LBS</span>
                     </h1>
                     <p className="text-[#A0A0A0] text-lg max-w-3xl mx-auto">
@@ -128,7 +128,7 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
                         </span>
                         <input
                             type="text"
-                            className="w-full bg-surface-dark border border-white/10 rounded-lg h-12 pl-12 pr-4 text-base focus:ring-primary focus:border-primary placeholder:text-white/50"
+                            className="w-full bg-surface-dark border border-white/10 rounded-lg h-12 pl-12 pr-4 text-base text-white focus:ring-primary focus:border-primary placeholder:text-white/50"
                             placeholder="Buscar tópicos, perguntas, pessoas..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
@@ -147,7 +147,7 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
                     {/* Main Content */}
                     <div className="lg:col-span-2 flex flex-col gap-8">
                         <section>
-                            <h2 className="text-2xl font-bold font-heading mb-5">Discussões Recentes</h2>
+                            <h2 className="text-2xl font-bold font-heading mb-5 text-white">Discussões Recentes</h2>
                             <div className="flex flex-col gap-4">
                                 {posts.data.length > 0 ? (
                                     posts.data.map((post) => (
@@ -192,12 +192,12 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
                                                             post.is_liked ? "text-primary" : ""
                                                         }`}
                                                     >
-                                                        <span 
+                                                        <span
                                                             className={`material-symbols-outlined text-lg ${
                                                                 post.is_liked ? "" : "opacity-60"
                                                             }`}
                                                             style={{
-                                                                fontVariationSettings: post.is_liked 
+                                                                fontVariationSettings: post.is_liked
                                                                     ? "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
                                                                     : "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24"
                                                             }}
@@ -246,7 +246,7 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
                     <aside className="lg:col-span-1 flex flex-col gap-8">
                         {/* Popular Tags */}
                         <section>
-                            <h2 className="text-2xl font-bold font-heading mb-5">Tópicos Populares</h2>
+                            <h2 className="text-2xl font-bold font-heading mb-5 text-white">Tópicos Populares</h2>
                             <div className="flex flex-wrap gap-2">
                                 {popularTags.map((tag) => (
                                     <button
@@ -264,7 +264,7 @@ const CommunityIndex: React.FC<CommunityIndexProps> = ({
 
                         {/* Top Contributors */}
                         <section className="p-6 rounded-xl bg-surface-dark border border-white/10">
-                            <h2 className="text-2xl font-bold font-heading mb-5">Top Contribuidores</h2>
+                            <h2 className="text-2xl font-bold font-heading mb-5 text-white">Top Contribuidores</h2>
                             <div className="flex flex-col gap-4">
                                 {topContributors.map((contributor, index) => (
                                     <div key={contributor.id} className="flex items-center gap-3">

@@ -91,7 +91,7 @@ const HelpIndex: React.FC<HelpIndexProps> = ({
                         </span>
                         <input
                             type="search"
-                            className="w-full bg-surface-dark border border-white/10 rounded-full h-14 pl-14 pr-6 text-base focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-white/40"
+                            className="w-full bg-surface-dark border border-white/10 rounded-full h-14 pl-14 pr-6 text-base text-white focus:ring-2 focus:ring-primary focus:border-primary placeholder:text-white/40"
                             placeholder="Digite sua pergunta aqui..."
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
