@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\StreakService;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
@@ -30,12 +31,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $user = $request->user();
+        $streakInfo = null;
+
+        if ($user) {
+            $streakService = new StreakService();
+            $streakInfo = $streakService->getStreakInfo($user);
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
             'platform' => fn() => $this->getPlatformData($request),
+            'streak' => $streakInfo,
             'ziggy' => fn () => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
@@ -53,9 +63,15 @@ class HandleInertiaRequests extends Middleware
         }
 
         $user = $request->user();
+
+        // Get all platforms for the user, ensuring no duplicates
+        // Use unique() on collection instead of groupBy to avoid SQL issues with pivot table
         $platforms = $user->platforms()
             ->select('platforms.id', 'platforms.name', 'platforms.slug', 'platforms.brand')
-            ->get();
+            ->orderBy('platforms.name')
+            ->get()
+            ->unique('id')
+            ->values();
 
         return [
             'current' => current_platform(),

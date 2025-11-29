@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { router } from "@inertiajs/react";
 import { Platform } from "@/types";
 
 interface PlatformSelectorProps {
@@ -13,89 +14,143 @@ export default function PlatformSelector({
     showSelector,
 }: PlatformSelectorProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
-    if (!showSelector || platforms.length <= 1) {
+    // Remove duplicates by id to ensure unique platforms
+    const uniquePlatforms = useMemo(() => {
+        const seen = new Set<number>();
+        return platforms.filter((platform) => {
+            if (seen.has(platform.id)) {
+                return false;
+            }
+            seen.add(platform.id);
+            return true;
+        });
+    }, [platforms]);
+
+    // Fecha o dropdown ao clicar fora
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOpen]);
+
+    if (!showSelector || uniquePlatforms.length <= 1) {
         return null;
     }
 
-    const handlePlatformChange = async (platformId: string) => {
+    const handlePlatformChange = async (platformId: number) => {
         if (isLoading || !platformId) return;
-        if (currentPlatform && parseInt(platformId) === currentPlatform.id)
+        if (currentPlatform && platformId === currentPlatform.id) {
+            setIsOpen(false);
             return;
+        }
 
         setIsLoading(true);
+        setIsOpen(false);
 
         try {
-            // Obtém o token atual do cookie ou localStorage
-            const authToken =
-                document.cookie
-                    .split("; ")
-                    .find((row) => row.startsWith("admin_token="))
-                    ?.split("=")[1] || localStorage.getItem("auth_token");
-
-            const response = await fetch("/api/admin/platforms/switch", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${authToken}`,
-                    "X-Requested-With": "XMLHttpRequest",
-                },
-                credentials: "include",
-                body: JSON.stringify({
-                    platform_id: parseInt(platformId),
-                }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Atualiza o token se fornecido
-                if (data.access_token) {
-                    localStorage.setItem("auth_token", data.access_token);
+            router.post(
+                route("platforms.switch"),
+                { platform_id: platformId },
+                {
+                    preserveScroll: true,
+                    onSuccess: () => {
+                        // Recarrega a página para aplicar as mudanças
+                        window.location.reload();
+                    },
+                    onError: (errors) => {
+                        console.error("Erro ao trocar plataforma:", errors);
+                        alert(
+                            errors.platform ||
+                                "Erro ao trocar plataforma. Tente novamente."
+                        );
+                    },
+                    onFinish: () => {
+                        setIsLoading(false);
+                    },
                 }
-
-                // Mostra mensagem de sucesso
-                if (data.message) {
-                    console.log(data.message);
-                }
-
-                // Recarrega a página para aplicar as mudanças
-                window.location.reload();
-            } else {
-                console.error("Erro ao trocar plataforma:", data.error);
-                alert(data.error || "Erro ao trocar plataforma");
-            }
+            );
         } catch (error) {
             console.error("Erro na requisição:", error);
             alert("Erro ao trocar plataforma. Tente novamente.");
-        } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="flex items-center space-x-2">
-            <label
-                htmlFor="platform-selector"
-                className="text-sm font-medium text-gray-700"
-            >
-                Plataforma:
-            </label>
-            <select
-                id="platform-selector"
-                value={currentPlatform?.id || ""}
-                onChange={(e) => handlePlatformChange(e.target.value)}
+        <div className="relative" ref={dropdownRef}>
+            <button
+                type="button"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(!isOpen);
+                }}
                 disabled={isLoading}
-                className="block w-auto px-3 py-1 text-sm border border-gray-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white/70 hover:text-white bg-white/5 hover:bg-white/10 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-                {platforms.map((platform) => (
-                    <option key={platform.id} value={platform.id}>
-                        {platform.name}
-                    </option>
-                ))}
-            </select>
-            {isLoading && (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                <span className="material-symbols-outlined text-lg">
+                    {isOpen ? "expand_less" : "expand_more"}
+                </span>
+                <span className="max-w-[150px] truncate">
+                    {currentPlatform?.name || "Plataforma"}
+                </span>
+
+                {isLoading && (
+                    <span className="material-symbols-outlined text-lg animate-spin">
+                        sync
+                    </span>
+                )}
+            </button>
+
+            {isOpen && (
+                <div className="absolute z-50 mt-2 w-56 rounded-md bg-surface-dark border border-white/10 shadow-lg">
+                    <div className="py-1 flex flex-col">
+                        {uniquePlatforms.map((platform) => (
+                            <button
+                                key={platform.id}
+                                type="button"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handlePlatformChange(platform.id);
+                                }}
+                                disabled={isLoading}
+                                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                                    currentPlatform?.id === platform.id
+                                        ? "bg-white/10 text-white font-medium"
+                                        : "text-white/70 hover:bg-white/10 hover:text-white"
+                                } ${
+                                    isLoading
+                                        ? "opacity-50 cursor-not-allowed"
+                                        : ""
+                                }`}
+                            >
+                                <div className="flex items-center justify-between">
+                                    <span>{platform.name}</span>
+                                    {currentPlatform?.id === platform.id && (
+                                        <span className="material-symbols-outlined text-sm">
+                                            check
+                                        </span>
+                                    )}
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                </div>
             )}
         </div>
     );

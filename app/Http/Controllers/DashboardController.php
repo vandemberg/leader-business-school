@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\WatchVideo;
+use App\Services\StreakService;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -14,10 +15,13 @@ class DashboardController extends Controller
         $platformId = current_platform_id();
         $platform = current_platform();
 
-        // Filter courses by platform
+        // Filter courses by platform - include courses without platform_id for backward compatibility
         $coursesQuery = Course::query();
         if ($platformId) {
-            $coursesQuery->where('platform_id', $platformId);
+            $coursesQuery->where(function ($q) use ($platformId) {
+                $q->where('platform_id', $platformId)
+                  ->orWhereNull('platform_id');
+            });
         }
         $allCourses = $coursesQuery->get();
 
@@ -98,13 +102,18 @@ class DashboardController extends Controller
             ->sortByDesc('updated_at')
             ->values();
 
+        // Get streak information
+        $streakService = new StreakService();
+        $streakInfo = $streakService->getStreakInfo($user);
+
         return Inertia::render('Dashboard')
             ->with('coursesInProgress', $recentCourses)
             ->with('allCourses', $allCoursesForGrid)
             ->with('coursesInProgressForGrid', $coursesInProgressForGrid)
             ->with('globalProgress', $globalProgress)
             ->with('totalHoursWatched', $totalHoursWatched)
-            ->with('platform', $platform);
+            ->with('platform', $platform)
+            ->with('streak', $streakInfo);
     }
 
     private function setCourseProgress($course, $user)

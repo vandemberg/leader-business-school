@@ -6,6 +6,7 @@ use App\Models\Video;
 use App\Models\VideoComment;
 use App\Models\VideoCommentReply;
 use App\Models\VideoCommentLike;
+use App\Services\StreakService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,11 +18,16 @@ class VideoCommentController extends Controller
             'content' => 'required|string|max:5000',
         ]);
 
+        $user = Auth::user();
         $comment = VideoComment::create([
             'video_id' => $video->id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'content' => $request->input('content'),
         ]);
+
+        // Increment streak when user comments on video
+        $streakService = new StreakService();
+        $streakService->incrementStreak($user);
 
         return response()->json([
             'success' => true,
@@ -35,11 +41,16 @@ class VideoCommentController extends Controller
             'content' => 'required|string|max:5000',
         ]);
 
+        $user = Auth::user();
         $reply = VideoCommentReply::create([
             'comment_id' => $comment->id,
-            'user_id' => Auth::id(),
+            'user_id' => $user->id,
             'content' => $request->input('content'),
         ]);
+
+        // Increment streak when user replies to a comment
+        $streakService = new StreakService();
+        $streakService->incrementStreak($user);
 
         return response()->json([
             'success' => true,

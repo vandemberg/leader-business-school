@@ -62,6 +62,7 @@ Route::middleware('auth')->group(function () {
 
     // Community
     Route::get('/community', [CommunityController::class, 'index'])->name('community.index');
+    Route::get('/community/posts/{post}', [CommunityController::class, 'show'])->name('community.posts.show');
     Route::post('/community/posts', [CommunityController::class, 'store'])->name('community.posts.store');
     Route::post('/community/posts/{post}/like', [CommunityController::class, 'toggleLike'])->name('community.posts.like');
     Route::post('/community/posts/{post}/comments', [CommunityController::class, 'storeComment'])->name('community.posts.comments.store');
@@ -70,6 +71,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/help', [HelpController::class, 'index'])->name('help.index');
     Route::get('/help/articles/{article}', [HelpController::class, 'show'])->name('help.articles.show');
     Route::get('/help/categories/{category}', [HelpController::class, 'category'])->name('help.categories.show');
+
+    // Platform switching
+    Route::post('/platforms/switch', [App\Http\Controllers\PlatformController::class, 'webSwitch'])->name('platforms.switch');
 });
 
 require __DIR__ . '/auth.php';

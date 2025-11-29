@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\WatchVideo;
 use App\Models\VideoComment;
 use App\Models\VideoRating;
+use App\Services\StreakService;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Video;
@@ -116,6 +117,11 @@ class WatchController extends Controller
                     'finished_at' => now(),
                 ]);
             }
+
+            // Increment streak when video is completed
+            $streakService = new StreakService();
+            $streakService->incrementStreak($user);
+
             return response()->json(['message' => 'Video completed', 'completed' => true]);
         }
     }

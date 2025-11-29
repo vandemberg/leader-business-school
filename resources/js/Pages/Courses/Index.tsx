@@ -79,7 +79,7 @@ const CoursesIndex: React.FC<CoursesIndexProps> = ({ auth, courses, categories, 
                             </span>
                             <input
                                 type="text"
-                                className="w-full bg-surface-dark border border-white/10 rounded-lg h-12 pl-12 pr-4 text-base focus:ring-primary focus:border-primary placeholder:text-white/50"
+                                className="w-full bg-surface-dark border border-white/10 rounded-lg h-12 pl-12 pr-4 text-base text-white focus:ring-primary focus:border-primary placeholder:text-white/50"
                                 placeholder="O que você quer aprender hoje?"
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
@@ -145,27 +145,39 @@ const CoursesIndex: React.FC<CoursesIndexProps> = ({ auth, courses, categories, 
 
                     {/* Courses Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {courses.length > 0 ? (
+                        {courses && courses.length > 0 ? (
                             courses.map((course) => (
                                 <PremiumCourseCard key={course.id} course={course} />
                             ))
                         ) : (
                             <div className="col-span-full bg-surface-dark rounded-xl p-8 text-center border border-white/10">
-                                <p className="text-[#A0A0A0] text-lg mb-4">
-                                    Nenhum curso encontrado com os filtros selecionados.
-                                </p>
-                                <button
-                                    onClick={() => {
-                                        setSearch("");
-                                        setCategory("");
-                                        setLevel("");
-                                        setSort("recent");
-                                        router.get(route("courses.index"), {}, { preserveState: false });
-                                    }}
-                                    className="gradient-button text-white px-6 py-2 rounded-lg transition-opacity"
-                                >
-                                    Limpar Filtros
-                                </button>
+                                <div className="flex flex-col items-center justify-center py-8">
+                                    <span className="material-symbols-outlined text-white/30 text-6xl mb-4">
+                                        school
+                                    </span>
+                                    <p className="text-white text-xl font-bold mb-2">
+                                        Nenhum curso disponível
+                                    </p>
+                                    <p className="text-[#A0A0A0] text-base mb-6">
+                                        {search || category || level
+                                            ? "Nenhum curso encontrado com os filtros selecionados."
+                                            : "Ainda não há cursos cadastrados nesta plataforma."}
+                                    </p>
+                                    {(search || category || level) && (
+                                        <button
+                                            onClick={() => {
+                                                setSearch("");
+                                                setCategory("");
+                                                setLevel("");
+                                                setSort("recent");
+                                                router.get(route("courses.index"), {}, { preserveState: false });
+                                            }}
+                                            className="gradient-button text-white px-6 py-2 rounded-lg transition-opacity"
+                                        >
+                                            Limpar Filtros
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </div>

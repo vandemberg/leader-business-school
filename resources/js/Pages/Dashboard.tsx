@@ -21,6 +21,12 @@ interface DashboardProps {
     globalProgress: number;
     totalHoursWatched: number;
     platform: PlatformProp;
+    streak?: {
+        current_streak: number;
+        longest_streak: number;
+        last_activity_date: string | null;
+        is_active: boolean;
+    };
 }
 
 interface PlatformProp {
@@ -36,7 +42,8 @@ const Dashboard: React.FC<DashboardProps> = ({
     coursesInProgressForGrid,
     globalProgress,
     totalHoursWatched,
-    platform
+    platform,
+    streak
 }) => {
     const userName = auth.user.name.split(' ')[0]; // Get first name
 
@@ -113,6 +120,33 @@ const Dashboard: React.FC<DashboardProps> = ({
                                     <span className="text-[#A0A0A0] text-xl font-medium pb-1">horas</span>
                                 </div>
                             </div>
+
+                            {/* Streak Card */}
+                            {streak && (
+                                <div className="flex flex-col gap-2 rounded-xl p-6 bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/30">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                            local_fire_department
+                                        </span>
+                                        <p className="text-white text-base font-medium leading-normal">
+                                            Sequência de Dias
+                                        </p>
+                                    </div>
+                                    <div className="flex items-end gap-2">
+                                        <p className="text-white tracking-light text-5xl font-bold leading-none font-heading">
+                                            {streak.current_streak}
+                                        </p>
+                                        <span className="text-white/70 text-xl font-medium pb-1">
+                                            {streak.current_streak === 1 ? 'dia' : 'dias'}
+                                        </span>
+                                    </div>
+                                    {streak.longest_streak > streak.current_streak && (
+                                        <p className="text-white/60 text-xs mt-1">
+                                            Recorde: {streak.longest_streak} {streak.longest_streak === 1 ? 'dia' : 'dias'}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         {/* Recent Courses */}

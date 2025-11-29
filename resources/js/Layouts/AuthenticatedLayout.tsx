@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
 import Dropdown from '@/components/Dropdown';
+import PlatformSelector from '@/components/PlatformSelector';
 import { Link, usePage } from "@inertiajs/react";
 import { User } from "@/types";
 
@@ -7,7 +8,7 @@ export default function Authenticated({
     user,
     children,
 }: PropsWithChildren<{ user: User }>) {
-    const { platform } = usePage().props as any;
+    const { platform, streak } = usePage().props as any;
 
     return (
         <div className="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden bg-background-light dark:bg-background-dark">
@@ -19,9 +20,17 @@ export default function Authenticated({
                                 <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
                             </svg>
                         </div>
-                        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] font-heading">
-                            {platform?.current?.name || 'Leader Business School'}
-                        </h2>
+                        {platform?.show_selector ? (
+                            <PlatformSelector
+                                platforms={platform.available || []}
+                                currentPlatform={platform.current}
+                                showSelector={platform.show_selector}
+                            />
+                        ) : (
+                            <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] font-heading">
+                                {platform?.current?.name || 'Leader Business School'}
+                            </h2>
+                        )}
                     </div>
                     <nav className="hidden md:flex flex-1 justify-center items-center gap-9">
                         <Link
@@ -73,6 +82,23 @@ export default function Authenticated({
                             <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
                                 <span className="material-symbols-outlined text-xl">settings</span>
                             </button>
+                        </div>
+                        {/* Streak Display */}
+                        <div className="hidden md:flex items-center justify-center overflow-hidden rounded-full bg-white/5 h-10 px-3 gap-2">
+                            {streak && streak.current_streak > 0 ? (
+                                <>
+                                    <span className="material-symbols-outlined text-red-500 text-lg" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                        local_fire_department
+                                    </span>
+                                    <span className="text-red-500 font-bold text-sm">
+                                        {streak.current_streak}
+                                    </span>
+                                </>
+                            ) : (
+                                <span className="material-symbols-outlined text-white/70 text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                    local_fire_department
+                                </span>
+                            )}
                         </div>
                         <Dropdown>
                             <Dropdown.Trigger>

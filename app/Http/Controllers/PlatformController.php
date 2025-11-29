@@ -91,4 +91,34 @@ class PlatformController extends Controller
 
         return $response;
     }
+
+    /**
+     * Troca a plataforma atual do usuário (versão web)
+     */
+    public function webSwitch(Request $request)
+    {
+        $request->validate([
+            'platform_id' => 'required|integer|exists:platforms,id'
+        ]);
+
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $platformId = $request->platform_id;
+
+        // Verifica se o usuário tem acesso a essa plataforma
+        $hasAccess = PlatformUser::where('user_id', $user->id)
+            ->where('platform_id', $platformId)
+            ->exists();
+
+        if (!$hasAccess) {
+            return back()->withErrors(['platform' => 'Você não tem acesso a esta plataforma']);
+        }
+
+        // Atualiza current_platform_id do usuário
+        $user->update(['current_platform_id' => $platformId]);
+
+        $platform = Platform::find($platformId);
+
+        return back()->with('success', "Plataforma alterada para: {$platform->name}");
+    }
 }

@@ -16,18 +16,19 @@ class CoursesController extends Controller
         $platformId = current_platform_id();
         $search = $request->get('search', '');
         $category = $request->get('category', '');
-        $level = $request->get('level', ''); // This would need to be added to courses table or tags
-        $sort = $request->get('sort', 'recent'); // recent, popular
+        $level = $request->get('level', '');
+        $sort = $request->get('sort', 'recent');
 
-        $query = Course::with(['tags', 'responsible'])
-            ->where('status', '!=', Course::STATUS_DRAFT);
+        $query = Course::with(['tags', 'responsible'])->whereNotIn('status', [Course::STATUS_DRAFT]);
 
-        // Filter by platform
         if ($platformId) {
-            $query->where('platform_id', $platformId);
+            $query->where(function ($q) use ($platformId) {
+                $q->where('platform_id', $platformId)
+                    ->orWhereNull('platform_id');
+            });
         }
 
-        // Search filter
+
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
@@ -35,17 +36,17 @@ class CoursesController extends Controller
             });
         }
 
-        // Category filter (by tag)
+
         if ($category) {
             $query->whereHas('tags', function ($q) use ($category) {
                 $q->where('tags.name', $category);
             });
         }
 
-        // Sort
+
         switch ($sort) {
             case 'popular':
-                // Sort by number of videos (as a proxy for popularity)
+
                 $query->withCount('videos');
                 break;
             case 'recent':
@@ -53,7 +54,7 @@ class CoursesController extends Controller
                 break;
         }
 
-        // Apply ordering
+
         if ($sort === 'popular') {
             $query->orderBy('videos_count', 'desc');
         } else {
@@ -62,7 +63,7 @@ class CoursesController extends Controller
 
         $courses = $query->get();
 
-        // Calculate progress for each course
+
         $courses->each(function ($course) use ($user) {
             if (strpos($course->thumbnail, 'thumbnails/') !== false) {
                 $course->thumbnail = url('/') . $course->thumbnail;
@@ -81,10 +82,14 @@ class CoursesController extends Controller
             $course->total_videos = $totalVideos;
         });
 
-        // Get available categories (tags) filtered by platform
+
+        // Get available categories (tags) - filter by platform if needed
         $categoriesQuery = Tag::withCount('coursesThroughPivot as courses_count');
         if ($platformId) {
-            $categoriesQuery->where('platform_id', $platformId);
+            $categoriesQuery->where(function ($q) use ($platformId) {
+                $q->where('platform_id', $platformId)
+                    ->orWhereNull('platform_id');
+            });
         }
         $categories = $categoriesQuery->orderBy('courses_count', 'desc')
             ->limit(10)

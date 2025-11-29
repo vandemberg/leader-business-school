@@ -30,6 +30,9 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'role',
         'current_platform_id',
+        'current_streak',
+        'last_activity_date',
+        'longest_streak',
     ];
 
     /**
@@ -55,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'last_activity_date' => 'date',
     ];
 
     public function watchVideos()
@@ -105,5 +109,19 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function addPlatform(int $platformId)
+    {
+        PlatformUser::create([
+            'user_id' => $this->id,
+            'platform_id' => $platformId,
+        ]);
+
+        if (count($this->platforms) === 0) {
+            $this->update(['current_platform_id' => $platformId]);
+        }
+
+        return $this;
     }
 }

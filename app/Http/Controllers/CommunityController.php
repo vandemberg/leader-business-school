@@ -6,6 +6,7 @@ use App\Models\CommunityPost;
 use App\Models\PostComment;
 use App\Models\PostLike;
 use App\Models\PostTag;
+use App\Services\StreakService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -92,8 +93,9 @@ class CommunityController extends Controller
             'tag' => 'nullable|string|max:50',
         ]);
 
+        $user = auth()->user();
         $post = CommunityPost::create([
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'platform_id' => current_platform_id(),
             'title' => $validated['title'],
             'content' => $validated['content'],
@@ -105,6 +107,10 @@ class CommunityController extends Controller
             PostTag::firstOrCreate(['name' => $validated['tag']])
                 ->increment('usage_count');
         }
+
+        // Increment streak when user creates a post
+        $streakService = new StreakService();
+        $streakService->incrementStreak($user);
 
         return redirect()->back()->with('success', 'Postagem criada com sucesso!');
     }
@@ -129,9 +135,45 @@ class CommunityController extends Controller
             $liked = true;
         }
 
-        return response()->json([
-            'liked' => $liked,
-            'likes_count' => $post->fresh()->likes_count,
+        // If request expects JSON (AJAX), return JSON
+        if ($request->expectsJson() || $request->wantsJson()) {
+            return response()->json([
+                'liked' => $liked,
+                'likes_count' => $post->fresh()->likes_count,
+            ]);
+        }
+
+        // Otherwise redirect back (for Inertia)
+        return redirect()->back();
+    }
+
+    public function show(CommunityPost $post)
+    {
+        $user = auth()->user();
+        $platformId = current_platform_id();
+
+        // Ensure post belongs to current platform
+        if ($platformId && $post->platform_id !== $platformId) {
+            abort(404);
+        }
+
+        // Load post with relationships
+        $post->load(['user']);
+        $post->loadCount(['likes', 'comments']);
+
+        // Load comments with user and replies
+        $comments = PostComment::with(['user', 'replies.user'])
+            ->where('post_id', $post->id)
+            ->whereNull('parent_id')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Mark if user liked the post
+        $post->is_liked = $post->isLikedBy($user->id);
+
+        return Inertia::render('Community/Show', [
+            'post' => $post,
+            'comments' => $comments,
         ]);
     }
 
@@ -142,15 +184,37 @@ class CommunityController extends Controller
             'parent_id' => 'nullable|exists:post_comments,id',
         ]);
 
+        $user = auth()->user();
         $comment = PostComment::create([
             'post_id' => $post->id,
-            'user_id' => auth()->id(),
+            'user_id' => $user->id,
             'content' => $validated['content'],
             'parent_id' => $validated['parent_id'] ?? null,
         ]);
 
         $post->increment('comments_count');
 
-        return redirect()->back()->with('success', 'Comentário adicionado!');
+        // Increment streak when user comments on a post
+        $streakService = new StreakService();
+        $streakService->incrementStreak($user);
+
+        // Reload comments to include the new one
+        $comments = PostComment::with(['user', 'replies.user'])
+            ->where('post_id', $post->id)
+            ->whereNull('parent_id')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Reload post with updated counts
+        $post->refresh();
+        $post->load(['user']);
+        $post->loadCount(['likes', 'comments']);
+        $post->is_liked = $post->isLikedBy(auth()->id());
+
+        return redirect()->back()->with([
+            'success' => 'Comentário adicionado!',
+            'post' => $post,
+            'comments' => $comments,
+        ]);
     }
 }
