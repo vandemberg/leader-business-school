@@ -7,6 +7,7 @@ use App\Models\VideoComment;
 use App\Models\VideoCommentReply;
 use App\Models\VideoCommentLike;
 use App\Services\StreakService;
+use App\Services\BadgeUnlockService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -28,6 +29,10 @@ class VideoCommentController extends Controller
         // Increment streak when user comments on video
         $streakService = new StreakService();
         $streakService->incrementStreak($user);
+
+        // Check and unlock badges for comments made
+        $badgeService = new BadgeUnlockService();
+        $badgeService->checkCommentsMade($user);
 
         return response()->json([
             'success' => true,

@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\TagCourseController;
 use App\Http\Controllers\Admin\HelpArticlesController;
 use App\Http\Controllers\Admin\HelpCategoriesController;
 use App\Http\Controllers\Admin\DashboardStatsController;
+use App\Http\Controllers\Admin\BadgesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UsersController;
@@ -63,6 +64,9 @@ Route::prefix('admin')->group(function () {
 
         // Help Categories routes
         Route::resource('help-categories', HelpCategoriesController::class);
+
+        // Badges routes
+        Route::resource('badges', BadgesController::class);
 
         // Dashboard analytics
         Route::get('dashboard', [DashboardStatsController::class, 'index'])->name('admin.dashboard.stats');

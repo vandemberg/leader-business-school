@@ -4,16 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Models\Course;
 use App\Models\WatchVideo;
+use App\Models\Badge;
 use App\Services\StreakService;
+use App\Services\BadgeUnlockService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
         $platformId = current_platform_id();
         $platform = current_platform();
+        $filter = $request->get('filter', 'in_progress');
 
         // Filter courses by platform - include courses without platform_id for backward compatibility
         // Exclude draft courses
@@ -95,17 +99,74 @@ class DashboardController extends Controller
         // All courses for the grid
         $allCoursesForGrid = $allCoursesWithProgress->sortByDesc('updated_at');
 
-        // Courses in progress (progress > 0 and < 100)
-        $coursesInProgressForGrid = $allCoursesWithProgress
-            ->filter(function ($course) {
-                return $course->progress > 0 && $course->progress < 100;
-            })
-            ->sortByDesc('updated_at')
-            ->values();
+        // Filter courses based on selected filter
+        $coursesInProgressForGrid = $allCoursesWithProgress->filter(function ($course) use ($filter) {
+            switch ($filter) {
+                case 'all':
+                    return true;
+                case 'in_progress':
+                    return $course->progress > 0 && $course->progress < 100;
+                case 'completed':
+                    return $course->progress === 100;
+                case 'not_started':
+                    return $course->progress === 0;
+                default:
+                    return $course->progress > 0 && $course->progress < 100;
+            }
+        })
+        ->sortByDesc('updated_at')
+        ->values();
 
         // Get streak information
         $streakService = new StreakService();
         $streakInfo = $streakService->getStreakInfo($user);
+
+        // Check and unlock badges (verifica todos os tipos)
+        $badgeService = new BadgeUnlockService();
+        $badgeService->checkVideosCompleted($user);
+        $badgeService->checkCoursesCompleted($user);
+        $badgeService->checkHoursWatched($user);
+        $badgeService->checkCommentsMade($user);
+        $badgeService->checkRatingsGiven($user);
+        $badgeService->checkCommunityPosts($user);
+
+        // Get all badges for the platform (unlocked and locked)
+        $allBadges = Badge::where('platform_id', $platformId)
+            ->where('is_active', true)
+            ->orderBy('threshold', 'asc')
+            ->get();
+
+        // Get unlocked badges for the user (only from current platform)
+        $unlockedBadgeIds = $user->badges()
+            ->where('badges.platform_id', $platformId)
+            ->pluck('badges.id')
+            ->toArray();
+
+        // Map badges with unlocked status
+        $badges = $allBadges->map(function ($badge) use ($user, $unlockedBadgeIds) {
+            $unlocked = in_array($badge->id, $unlockedBadgeIds);
+            $unlockedAt = null;
+            
+            if ($unlocked) {
+                $pivot = \DB::table('user_badges')
+                    ->where('user_id', $user->id)
+                    ->where('badge_id', $badge->id)
+                    ->first();
+                $unlockedAt = $pivot ? $pivot->unlocked_at : null;
+            }
+
+            return [
+                'id' => $badge->id,
+                'title' => $badge->title,
+                'icon' => $badge->icon,
+                'color' => $badge->color,
+                'type' => $badge->type,
+                'threshold' => $badge->threshold,
+                'description' => $badge->description,
+                'unlocked' => $unlocked,
+                'unlocked_at' => $unlockedAt,
+            ];
+        });
 
         return Inertia::render('Dashboard')
             ->with('coursesInProgress', $recentCourses)
@@ -113,7 +174,9 @@ class DashboardController extends Controller
             ->with('coursesInProgressForGrid', $coursesInProgressForGrid)
             ->with('globalProgress', $globalProgress)
             ->with('totalHoursWatched', $totalHoursWatched)
-            ->with('streak', $streakInfo);
+            ->with('filter', $filter)
+            ->with('streak', $streakInfo)
+            ->with('badges', $badges);
     }
 
     private function setCourseProgress($course, $user)

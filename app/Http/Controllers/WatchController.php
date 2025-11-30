@@ -6,6 +6,7 @@ use App\Models\WatchVideo;
 use App\Models\VideoComment;
 use App\Models\VideoRating;
 use App\Services\StreakService;
+use App\Services\BadgeUnlockService;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Video;
@@ -121,6 +122,12 @@ class WatchController extends Controller
             // Increment streak when video is completed
             $streakService = new StreakService();
             $streakService->incrementStreak($user);
+
+            // Check and unlock badges for videos completed
+            $badgeService = new BadgeUnlockService();
+            $badgeService->checkVideosCompleted($user);
+            $badgeService->checkCoursesCompleted($user);
+            $badgeService->checkHoursWatched($user);
 
             return response()->json(['message' => 'Video completed', 'completed' => true]);
         }

@@ -101,6 +101,13 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(PostLike::class);
     }
 
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')
+            ->withPivot('unlocked_at')
+            ->withTimestamps();
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();

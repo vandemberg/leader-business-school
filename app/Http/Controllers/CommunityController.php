@@ -7,6 +7,7 @@ use App\Models\PostComment;
 use App\Models\PostLike;
 use App\Models\PostTag;
 use App\Services\StreakService;
+use App\Services\BadgeUnlockService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -111,6 +112,10 @@ class CommunityController extends Controller
         // Increment streak when user creates a post
         $streakService = new StreakService();
         $streakService->incrementStreak($user);
+
+        // Check and unlock badges for community posts
+        $badgeService = new BadgeUnlockService();
+        $badgeService->checkCommunityPosts($user);
 
         return redirect()->back()->with('success', 'Postagem criada com sucesso!');
     }
