@@ -29,7 +29,7 @@ class WatchController extends Controller
 
         $videos = $course->videos()
             ->with('module')
-            ->orderBy('id')
+            ->orderBy('order')
             ->get()
             ->map(function ($video) use ($user) {
                 $watched = WatchVideo::where('user_id', $user->id)

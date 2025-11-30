@@ -17,7 +17,19 @@ class TagCourseController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $platformId = $this->getPlatformId($request);
+
         $query = TagCourse::with(['tag', 'course']);
+
+        // Filtrar através dos courses que pertencem à plataforma
+        if ($platformId) {
+            $query->whereHas('course', function ($q) use ($platformId) {
+                $q->where(function ($subQ) use ($platformId) {
+                    $subQ->where('platform_id', $platformId)
+                         ->orWhereNull('platform_id');
+                });
+            });
+        }
 
         if ($tagId = $request->get('tag_id')) {
             $query->where('tag_id', $tagId);
@@ -37,10 +49,28 @@ class TagCourseController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $platformId = $this->getPlatformId($request);
+
+        if (!$platformId) {
+            abort(403, 'Plataforma não identificada');
+        }
+
         $data = $request->validate([
             'tag_id' => 'required|integer|exists:tags,id',
             'course_id' => 'required|integer|exists:courses,id',
         ]);
+
+        // Validar que tag e course pertencem à mesma plataforma
+        $tag = Tag::findOrFail($data['tag_id']);
+        $course = Course::findOrFail($data['course_id']);
+
+        if ($tag->platform_id !== $platformId) {
+            abort(403, 'Tag não pertence à sua plataforma');
+        }
+
+        if ($course->platform_id !== null && $course->platform_id !== $platformId) {
+            abort(403, 'Curso não pertence à sua plataforma');
+        }
 
         // Verificar se a associação já existe
         $existingTagCourse = TagCourse::where('tag_id', $data['tag_id'])
@@ -64,7 +94,16 @@ class TagCourseController extends Controller
      */
     public function show(TagCourse $tagCourse): JsonResponse
     {
+        $platformId = $this->getPlatformId(request());
+
+        // Validar através do course
         $tagCourse->load(['tag', 'course']);
+
+        if ($platformId) {
+            if ($tagCourse->course->platform_id !== null && $tagCourse->course->platform_id !== $platformId) {
+                abort(403, 'Recurso não pertence à sua plataforma');
+            }
+        }
 
         return response()->json($tagCourse);
     }
@@ -74,6 +113,17 @@ class TagCourseController extends Controller
      */
     public function destroy(TagCourse $tagCourse)
     {
+        $platformId = $this->getPlatformId(request());
+
+        // Validar através do course
+        $tagCourse->load('course');
+
+        if ($platformId) {
+            if ($tagCourse->course->platform_id !== null && $tagCourse->course->platform_id !== $platformId) {
+                abort(403, 'Recurso não pertence à sua plataforma');
+            }
+        }
+
         $tagCourse->delete();
 
         return response()->noContent(204);
@@ -84,10 +134,26 @@ class TagCourseController extends Controller
      */
     public function destroyByTagAndCourse(Request $request)
     {
+        $platformId = $this->getPlatformId($request);
+
         $data = $request->validate([
             'tag_id' => 'required|integer|exists:tags,id',
             'course_id' => 'required|integer|exists:courses,id',
         ]);
+
+        // Validar que tag e course pertencem à plataforma
+        $tag = Tag::findOrFail($data['tag_id']);
+        $course = Course::findOrFail($data['course_id']);
+
+        if ($platformId) {
+            if ($tag->platform_id !== $platformId) {
+                abort(403, 'Tag não pertence à sua plataforma');
+            }
+
+            if ($course->platform_id !== null && $course->platform_id !== $platformId) {
+                abort(403, 'Curso não pertence à sua plataforma');
+            }
+        }
 
         $tagCourse = TagCourse::where('tag_id', $data['tag_id'])
             ->where('course_id', $data['course_id'])
@@ -109,6 +175,8 @@ class TagCourseController extends Controller
      */
     public function getTagsByCourse(Course $course): JsonResponse
     {
+        $this->validateCoursePlatform($course);
+
         $tagCourses = TagCourse::where('course_id', $course->id)
             ->with('tag')
             ->get();
@@ -121,6 +189,8 @@ class TagCourseController extends Controller
      */
     public function getCoursesByTag(Tag $tag): JsonResponse
     {
+        $this->validatePlatformAccess($tag);
+
         $tagCourses = TagCourse::where('tag_id', $tag->id)
             ->with('course')
             ->get();

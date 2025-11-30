@@ -4,13 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Tag extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'platform_id'];
 
     /**
      * Get the tag-course relationships for this tag.
@@ -26,5 +27,13 @@ class Tag extends Model
     public function coursesThroughPivot()
     {
         return $this->belongsToMany(Course::class, 'tag_courses');
+    }
+
+    /**
+     * Get the platform that owns the tag.
+     */
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
     }
 }

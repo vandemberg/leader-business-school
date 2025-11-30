@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 
 interface HelpCategory {
     id: number;
@@ -57,7 +57,9 @@ const HelpIndex: React.FC<HelpIndexProps> = ({
     };
 
     const handleCategoryClick = (categorySlug: string) => {
-        router.get(route("help.index"), { category: categorySlug }, {
+        // Se a categoria já está selecionada, remove o filtro (toggle)
+        const newCategory = filters.category === categorySlug ? '' : categorySlug;
+        router.get(route("help.index"), { category: newCategory, search: filters.search }, {
             preserveState: true,
             preserveScroll: true,
         });
@@ -77,7 +79,6 @@ const HelpIndex: React.FC<HelpIndexProps> = ({
             <Head title="Ajuda" />
 
             <div className="layout-content-container flex flex-col w-full max-w-5xl flex-1 gap-12">
-                {/* Header Section */}
                 <section className="text-center">
                     <h1 className="text-white text-4xl md:text-5xl font-black leading-tight tracking-[-0.033em] font-heading mb-4">
                         Como podemos ajudar?
@@ -107,32 +108,83 @@ const HelpIndex: React.FC<HelpIndexProps> = ({
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {categories.map((category) => {
                             const iconName = category.icon || categoryIcons[category.name] || "help";
+                            const isSelected = filters.category === category.slug;
                             return (
-                                <Link
+                                <button
                                     key={category.id}
-                                    href={route("help.categories.show", category.slug)}
-                                    className="group flex items-center gap-4 rounded-xl bg-surface-dark p-6 border border-white/10 hover:border-primary transition-colors hover:bg-surface-dark/80"
+                                    onClick={() => handleCategoryClick(category.slug)}
+                                    className={`group relative flex items-center gap-4 rounded-xl p-6 border transition-colors overflow-hidden text-left ${
+                                        isSelected
+                                            ? "bg-primary/20 border-primary hover:bg-primary/30"
+                                            : "bg-surface-dark border-white/10 hover:border-primary hover:bg-surface-dark/80"
+                                    }`}
                                 >
                                     <div className="flex-shrink-0 flex items-center justify-center size-12 rounded-lg bg-gradient-to-br from-secondary to-primary text-white">
                                         <span className="material-symbols-outlined text-3xl">{iconName}</span>
                                     </div>
-                                    <div>
+                                    <div className="flex-1">
                                         <h3 className="text-white font-bold">{category.name}</h3>
                                         <p className="text-sm text-white/60">
                                             {category.articles_count} {category.articles_count === 1 ? "artigo" : "artigos"}
                                         </p>
                                     </div>
-                                </Link>
+
+                                    {isSelected && (
+                                        <div className="flex-shrink-0">
+                                            <span className="material-symbols-outlined text-primary text-xl">
+                                                check_circle
+                                            </span>
+                                        </div>
+                                    )}
+                                </button>
                             );
                         })}
                     </div>
                 </section>
 
+                {/* Articles Section - Show when category is filtered */}
+                {filters.category && articles.length > 0 && (
+                    <section>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-white text-2xl font-bold font-heading">
+                                Artigos da Categoria
+                            </h2>
+                            <button
+                                onClick={() => handleCategoryClick(filters.category)}
+                                className="text-sm text-primary hover:text-secondary transition-colors"
+                            >
+                                Limpar filtro
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            {articles.map((article) => (
+                                <div
+                                    key={article.id}
+                                    className="rounded-lg bg-surface-dark border border-white/10 p-6"
+                                >
+                                    <h3 className="text-white font-semibold text-lg mb-2">{article.question}</h3>
+                                    <p className="text-white/70 leading-relaxed">{article.answer}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 {/* FAQ Section */}
                 <section>
-                    <h2 className="text-white text-2xl font-bold font-heading mb-6 text-center sm:text-left">
-                        Perguntas Frequentes
-                    </h2>
+                    <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-white text-2xl font-bold font-heading text-center sm:text-left">
+                            Perguntas Frequentes
+                        </h2>
+                        {filters.category && (
+                            <button
+                                onClick={() => handleCategoryClick(filters.category)}
+                                className="text-sm text-primary hover:text-secondary transition-colors"
+                            >
+                                Limpar filtro
+                            </button>
+                        )}
+                    </div>
                     <div className="space-y-4">
                         {faqs.length > 0 ? (
                             faqs.map((faq) => (

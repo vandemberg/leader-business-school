@@ -15,7 +15,14 @@ class TagController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        $platformId = $this->getPlatformId($request);
+
         $query = Tag::query();
+
+        // Filtrar tags por platform_id
+        if ($platformId) {
+            $query->where('platform_id', $platformId);
+        }
 
         if ($search = $request->get('search')) {
             $query->where('name', 'like', '%' . $search . '%');
@@ -31,10 +38,17 @@ class TagController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+        $platformId = $this->getPlatformId($request);
+
+        if (!$platformId) {
+            abort(403, 'Plataforma não identificada');
+        }
+
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:tags,name',
         ]);
 
+        $data['platform_id'] = $platformId;
         $tag = Tag::create($data);
 
         return response()->json($tag, 201);
@@ -45,6 +59,8 @@ class TagController extends Controller
      */
     public function show(Tag $tag): JsonResponse
     {
+        $this->validatePlatformAccess($tag);
+
         return response()->json($tag);
     }
 
@@ -53,6 +69,8 @@ class TagController extends Controller
      */
     public function update(Request $request, Tag $tag): JsonResponse
     {
+        $this->validatePlatformAccess($tag);
+
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:tags,name,' . $tag->id,
         ]);
@@ -67,6 +85,8 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
+        $this->validatePlatformAccess($tag);
+
         // Verificar se a tag está sendo usada em algum curso
         if ($tag->courses()->count() > 0) {
             return response()->json([

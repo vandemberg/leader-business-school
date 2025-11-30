@@ -8,10 +8,7 @@ interface TeachersProps {
 
 const Teachers: React.FC<TeachersProps> = ({ auth, teachers }) => {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800  leading-tight">Treinadores</h2>}
-        >
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Treinadores" />
 
             <div className='flex flex-wrap pb-6'>

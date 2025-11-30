@@ -42,25 +42,6 @@ services:
     networks:
       - lbs-platform
 
-#   vite:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile.vite
-#     container_name: lbs-platform-vite
-#     restart: unless-stopped
-#     working_dir: /var/www/
-#     command: npm run dev
-#     ports:
-#       - "5173:5173"
-#     volumes:
-#       - ./:/var/www
-#       - /var/www/node_modules
-#     networks:
-#       - lbs-platform
-#     environment:
-#       - VITE_HOST=0.0.0.0
-#       - VITE_PORT=5173
-
 networks:
   lbs-platform:
     driver: bridge

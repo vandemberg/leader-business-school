@@ -15,13 +15,11 @@ class HelpArticle extends Model
         'platform_id',
         'question',
         'answer',
-        'order',
         'is_faq',
         'views_count',
     ];
 
     protected $casts = [
-        'order' => 'integer',
         'is_faq' => 'boolean',
         'views_count' => 'integer',
     ];

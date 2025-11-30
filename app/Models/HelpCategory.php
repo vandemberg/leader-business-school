@@ -17,12 +17,7 @@ class HelpCategory extends Model
         'slug',
         'icon',
         'description',
-        'order',
         'platform_id',
-    ];
-
-    protected $casts = [
-        'order' => 'integer',
     ];
 
     /**
@@ -35,13 +30,23 @@ class HelpCategory extends Model
 
     /**
      * Retrieve the model for route model binding, filtering by platform_id.
+     * Supports both ID (numeric) and slug lookups.
      */
     public function resolveRouteBinding($value, $field = null)
     {
         $platformId = current_platform_id();
-        $routeKey = $field ?? $this->getRouteKeyName();
 
-        $query = $this->where($routeKey, $value);
+        // If field is explicitly set, use it
+        if ($field !== null) {
+            $query = $this->where($field, $value);
+        } else {
+            // If value is numeric, search by ID; otherwise search by slug
+            if (is_numeric($value)) {
+                $query = $this->where('id', $value);
+            } else {
+                $query = $this->where('slug', $value);
+            }
+        }
 
         if ($platformId) {
             $query->where('platform_id', $platformId);
@@ -50,6 +55,7 @@ class HelpCategory extends Model
         $model = $query->first();
 
         if (!$model) {
+            $routeKey = $field ?? (is_numeric($value) ? 'id' : 'slug');
             throw new ModelNotFoundException("No query results for model [{$this->getMorphClass()}] with {$routeKey} [{$value}]");
         }
 

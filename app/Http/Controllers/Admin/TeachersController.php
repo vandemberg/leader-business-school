@@ -11,10 +11,24 @@ class TeachersController extends Controller
 {
     public function index(Request $request)
     {
+        $platformId = $this->getPlatformId($request);
+
         $query = Teacher::query();
+
+        // Filtrar teachers que têm cursos na plataforma atual
+        if ($platformId) {
+            $query->whereHas('courses', function ($q) use ($platformId) {
+                $q->where(function ($subQ) use ($platformId) {
+                    $subQ->where('platform_id', $platformId)
+                         ->orWhereNull('platform_id');
+                });
+            });
+        }
+
         if ($search = $request->get('search')) {
             $query->where('name', 'like', '%' . $search . '%');
         }
+
         $teachers = $query->get();
         $teachers->each(function (Teacher $teacher) {
             if ($teacher->avatar_url) {
@@ -26,6 +40,22 @@ class TeachersController extends Controller
 
     public function show(Teacher $teacher)
     {
+        $platformId = $this->getPlatformId(request());
+
+        // Validar que teacher tem pelo menos um course na plataforma
+        if ($platformId) {
+            $hasCourseInPlatform = $teacher->courses()
+                ->where(function ($q) use ($platformId) {
+                    $q->where('platform_id', $platformId)
+                      ->orWhereNull('platform_id');
+                })
+                ->exists();
+
+            if (!$hasCourseInPlatform) {
+                abort(403, 'Professor não possui cursos na sua plataforma');
+            }
+        }
+
         if ($teacher->avatar_url) {
             $teacher->avatar_url = url('/') . $teacher->avatar_url;
         }
@@ -52,6 +82,22 @@ class TeachersController extends Controller
 
     public function update(Request $request, Teacher $teacher)
     {
+        $platformId = $this->getPlatformId($request);
+
+        // Validar que teacher tem courses na plataforma
+        if ($platformId) {
+            $hasCourseInPlatform = $teacher->courses()
+                ->where(function ($q) use ($platformId) {
+                    $q->where('platform_id', $platformId)
+                      ->orWhereNull('platform_id');
+                })
+                ->exists();
+
+            if (!$hasCourseInPlatform) {
+                abort(403, 'Professor não possui cursos na sua plataforma');
+            }
+        }
+
         $data = $request->validate([
             'name' => 'sometimes|required|string|max:255',
             'email' => 'sometimes|required|email|unique:teachers,email,' . $teacher->id,
@@ -70,6 +116,22 @@ class TeachersController extends Controller
 
     public function destroy(Teacher $teacher)
     {
+        $platformId = $this->getPlatformId(request());
+
+        // Validar que teacher tem courses na plataforma
+        if ($platformId) {
+            $hasCourseInPlatform = $teacher->courses()
+                ->where(function ($q) use ($platformId) {
+                    $q->where('platform_id', $platformId)
+                      ->orWhereNull('platform_id');
+                })
+                ->exists();
+
+            if (!$hasCourseInPlatform) {
+                abort(403, 'Professor não possui cursos na sua plataforma');
+            }
+        }
+
         $teacher->delete();
         return response()->json(['message' => 'Professor removido com sucesso.']);
     }

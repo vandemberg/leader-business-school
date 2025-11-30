@@ -174,7 +174,7 @@ const Course: React.FC<CourseProps> = ({
         setPlayerReady(false);
 
         setTimeout(() => {
-            if (!playerReady) {
+            if (!playerRef.current) {
                 setVideoUnavailable(true);
             }
         }, 3500);

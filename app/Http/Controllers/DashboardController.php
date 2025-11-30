@@ -16,7 +16,8 @@ class DashboardController extends Controller
         $platform = current_platform();
 
         // Filter courses by platform - include courses without platform_id for backward compatibility
-        $coursesQuery = Course::query();
+        // Exclude draft courses
+        $coursesQuery = Course::query()->whereNotIn('status', [Course::STATUS_DRAFT]);
         if ($platformId) {
             $coursesQuery->where(function ($q) use ($platformId) {
                 $q->where('platform_id', $platformId)
@@ -112,7 +113,6 @@ class DashboardController extends Controller
             ->with('coursesInProgressForGrid', $coursesInProgressForGrid)
             ->with('globalProgress', $globalProgress)
             ->with('totalHoursWatched', $totalHoursWatched)
-            ->with('platform', $platform)
             ->with('streak', $streakInfo);
     }
 

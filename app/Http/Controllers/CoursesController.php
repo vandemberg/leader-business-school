@@ -46,8 +46,10 @@ class CoursesController extends Controller
 
         switch ($sort) {
             case 'popular':
-
-                $query->withCount('videos');
+                // Usar subquery para evitar ambiguidade na coluna id
+                $query->selectRaw('(SELECT COUNT(videos.id) FROM videos 
+                    INNER JOIN modules ON modules.id = videos.module_id 
+                    WHERE modules.course_id = courses.id) as videos_count');
                 break;
             case 'recent':
             default:
@@ -69,7 +71,7 @@ class CoursesController extends Controller
                 $course->thumbnail = url('/') . $course->thumbnail;
             }
 
-            $videos = $course->modules()->with('videos')->get()->pluck('videos')->flatten();
+            $videos = $course->modules()->orderBy('order')->with('videos')->get()->pluck('videos')->flatten();
             $totalVideos = $videos->count();
             $totalDone = WatchVideo::where('user_id', $user->id)
                 ->whereIn('video_id', $videos->pluck('id'))

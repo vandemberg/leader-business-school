@@ -20,7 +20,7 @@ class HelpController extends Controller
         if ($platformId) {
             $categoriesQuery->where('platform_id', $platformId);
         }
-        $categories = $categoriesQuery->orderBy('order')->get();
+        $categories = $categoriesQuery->orderBy('created_at', 'desc')->get();
 
         // Filter articles by platform
         $query = HelpArticle::with('category');
@@ -43,10 +43,10 @@ class HelpController extends Controller
 
         // Clone the query before applying FAQ filter to avoid affecting the articles query
         $faqs = (clone $query)->where('is_faq', true)
-            ->orderBy('order')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        $articles = $query->orderBy('order')
+        $articles = $query->orderBy('created_at', 'desc')
             ->get();
 
         return Inertia::render('Help/Index', [
@@ -80,7 +80,7 @@ class HelpController extends Controller
             $articlesQuery->where('platform_id', $platformId);
         }
 
-        $articles = $articlesQuery->orderBy('order')->get();
+        $articles = $articlesQuery->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('Help/Category', [
             'category' => $category,

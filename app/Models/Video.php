@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Events\VideoCreated;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Video extends Model
 {
@@ -21,6 +22,8 @@ class Video extends Model
         'time_in_seconds',
         'module_id',
         'course_id',
+        'order',
+        'platform_id',
     ];
 
     /**
@@ -79,5 +82,10 @@ class Video extends Model
     public function reports()
     {
         return $this->hasMany(VideoReport::class);
+    }
+
+    public function platform(): BelongsTo
+    {
+        return $this->belongsTo(Platform::class);
     }
 }

@@ -7,10 +7,7 @@ import { PageProps } from '@/types';
 
 export default function Edit({ auth, mustVerifyEmail, status }: PageProps<{ mustVerifyEmail: boolean, status?: string }>) {
     return (
-        <AuthenticatedLayout
-            user={auth.user}
-            header={<h2 className="font-semibold text-xl text-gray-800leading-tight">Perfil</h2>}
-        >
+        <AuthenticatedLayout user={auth.user}>
             <Head title="Perfil" />
 
             <div className="py-12">

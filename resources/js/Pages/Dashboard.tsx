@@ -20,19 +20,12 @@ interface DashboardProps {
     coursesInProgressForGrid: Course[];
     globalProgress: number;
     totalHoursWatched: number;
-    platform: PlatformProp;
     streak?: {
         current_streak: number;
         longest_streak: number;
         last_activity_date: string | null;
         is_active: boolean;
     };
-}
-
-interface PlatformProp {
-    id: number;
-    name: string;
-    slug: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({
@@ -42,7 +35,6 @@ const Dashboard: React.FC<DashboardProps> = ({
     coursesInProgressForGrid,
     globalProgress,
     totalHoursWatched,
-    platform,
     streak
 }) => {
     const userName = auth.user.name.split(' ')[0]; // Get first name

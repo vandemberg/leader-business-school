@@ -16,8 +16,15 @@ export default function Authenticated({
                 <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-4 sm:px-10 lg:px-20 py-4 sticky top-0 z-50 bg-background-dark/80 backdrop-blur-sm">
                     <div className="flex items-center gap-4 text-white">
                         <div className="size-6 text-primary">
-                            <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                            <svg
+                                fill="none"
+                                viewBox="0 0 48 48"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path
+                                    d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z"
+                                    fill="currentColor"
+                                ></path>
                             </svg>
                         </div>
                         {platform?.show_selector ? (
@@ -28,7 +35,8 @@ export default function Authenticated({
                             />
                         ) : (
                             <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] font-heading">
-                                {platform?.current?.name || 'Leader Business School'}
+                                {platform?.current?.name ||
+                                    "Leader Business School"}
                             </h2>
                         )}
                     </div>
@@ -66,7 +74,8 @@ export default function Authenticated({
                         <Link
                             href={route("help.index")}
                             className={`text-sm font-medium leading-normal transition-colors ${
-                                route().current("help.index") || route().current("help.*")
+                                route().current("help.index") ||
+                                route().current("help.*")
                                     ? "text-white border-b-2 border-primary pb-1 font-bold"
                                     : "text-white/70 hover:text-white"
                             }`}
@@ -75,19 +84,25 @@ export default function Authenticated({
                         </Link>
                     </nav>
                     <div className="flex items-center gap-4">
-                        <div className="flex gap-2">
+                        {/* <div className="flex gap-2">
                             <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
                                 <span className="material-symbols-outlined text-xl">notifications</span>
                             </button>
                             <button className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white/5 text-white/70 hover:bg-white/10 hover:text-white transition-colors">
                                 <span className="material-symbols-outlined text-xl">settings</span>
                             </button>
-                        </div>
+                        </div> */}
                         {/* Streak Display */}
                         <div className="hidden md:flex items-center justify-center overflow-hidden rounded-full bg-white/5 h-10 px-3 gap-2">
                             {streak && streak.current_streak > 0 ? (
                                 <>
-                                    <span className="material-symbols-outlined text-red-500 text-lg" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                    <span
+                                        className="material-symbols-outlined text-red-500 text-lg"
+                                        style={{
+                                            fontVariationSettings:
+                                                "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                                        }}
+                                    >
                                         local_fire_department
                                     </span>
                                     <span className="text-red-500 font-bold text-sm">
@@ -95,7 +110,13 @@ export default function Authenticated({
                                     </span>
                                 </>
                             ) : (
-                                <span className="material-symbols-outlined text-white/70 text-lg" style={{ fontVariationSettings: "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                <span
+                                    className="material-symbols-outlined text-white/70 text-lg"
+                                    style={{
+                                        fontVariationSettings:
+                                            "'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                                    }}
+                                >
                                     local_fire_department
                                 </span>
                             )}
