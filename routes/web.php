@@ -32,6 +32,12 @@ Route::get('/', function () {
     return response()->redirectTo('/dashboard');
 });
 
+// Invitation routes (sem autenticação)
+Route::get('/invite/register/{token}', [App\Http\Controllers\InvitationRegisterController::class, 'show'])->name('invite.register');
+Route::post('/invite/register/{token}', [App\Http\Controllers\InvitationRegisterController::class, 'store'])->name('invite.register.store');
+Route::get('/invite/accept/{token}', [App\Http\Controllers\InvitationAcceptController::class, 'show'])->name('invite.accept');
+Route::post('/invite/accept/{token}', [App\Http\Controllers\InvitationAcceptController::class, 'store'])->name('invite.accept.store');
+
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Invitation;
 use App\Models\PlatformUser;
 use App\Models\WatchVideo;
+use App\Mail\InvitationMail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -22,7 +23,7 @@ class UsersController extends Controller
 
         // Filtrar usuários que pertencem à plataforma atual
         if ($platformId) {
-            $query->whereHas('platforms', function ($q) use ($platformId) {
+            $query->whereHas('platforms', callback: function ($q) use ($platformId) {
                 $q->where('platform_id', $platformId);
             });
         }
@@ -30,7 +31,7 @@ class UsersController extends Controller
         if (isset($search) && $search != '') {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('email', 'like', '%' . $search . '%');
+                    ->orWhere('email', 'like', '%' . $search . '%');
             });
         }
 
@@ -99,11 +100,11 @@ class UsersController extends Controller
 
         $data = $request->validate([
             'email' => 'required|string|email|max:255',
-            'role' => 'required|in:' . User::ROLE_ADMIN . ',' . User::ROLE_USER,
         ]);
 
         // Verificar se já existe um usuário com este email
         $existingUser = User::where('email', $data['email'])->first();
+        $isNewUser = !$existingUser;
 
         if ($existingUser) {
             // Verificar se já está na plataforma
@@ -138,14 +139,17 @@ class UsersController extends Controller
         $invitation = Invitation::create([
             'email' => $data['email'],
             'platform_id' => $platformId,
-            'role' => $data['role'],
+            'role' => User::ROLE_USER, // Sempre student para alunos
             'token' => $token,
             'expires_at' => $expiresAt,
             'created_by' => auth()->id(),
         ]);
 
-        // TODO: Enviar email com link de convite
-        // Mail::to($data['email'])->send(new InvitationMail($invitation));
+        // Carregar relacionamento da plataforma
+        $invitation->load('platform');
+
+        // Enviar email com link de convite
+        Mail::to($data['email'])->send(new InvitationMail($invitation, $isNewUser));
 
         return response()->json([
             'message' => 'Convite enviado com sucesso',
@@ -183,24 +187,5 @@ class UsersController extends Controller
         return response()->json([
             'message' => 'Usuário removido da plataforma com sucesso'
         ], 200);
-    }
-
-    public function destroy(User $user)
-    {
-        $platformId = $this->getPlatformId(request());
-
-        // Validar que usuário pertence à plataforma
-        if ($platformId) {
-            $hasAccess = PlatformUser::where('user_id', $user->id)
-                ->where('platform_id', $platformId)
-                ->exists();
-
-            if (!$hasAccess) {
-                abort(403, 'Usuário não pertence à sua plataforma');
-            }
-        }
-
-        $user->delete();
-        return response()->json(null, 204);
     }
 }

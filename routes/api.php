@@ -40,7 +40,7 @@ Route::prefix('admin')->group(function () {
         // Users routes - apenas index, show, destroy (sem store/update)
         Route::get('users', [UsersController::class, 'index'])->name('admin.users.index');
         Route::get('users/{user}', [UsersController::class, 'show'])->name('admin.users.show');
-        Route::delete('users/{user}', [UsersController::class, 'destroy'])->name('admin.users.destroy');
+        Route::delete('users/{user}', [UsersController::class, 'removeFromPlatform'])->name('admin.users.destroy');
         Route::post('users/invite', [UsersController::class, 'invite'])->name('admin.users.invite');
         Route::delete('users/{user}/platform', [UsersController::class, 'removeFromPlatform'])->name('admin.users.remove-from-platform');
 
