@@ -13,6 +13,8 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
+    private User $user;
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');
@@ -21,17 +23,18 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $user = User::where('email', $credentials['email'])->first();
+        $this->user = User::where('email', $credentials['email'])->first();
 
-        if ($user->role != User::ROLE_ADMIN) {
+        if ($this->user->role != User::ROLE_ADMIN) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
         // Garantir que o usuário sempre tenha uma plataforma
-        $platformId = $this->ensureUserPlatform($user);
+        $platformId = $this->ensureUserPlatform($this->user);
 
         // Criar JWT com platform_id incluído
-        $token = JWTAuth::claims(['platform_id' => $platformId])->fromUser($user);
+        $token = JWTAuth::claims(['platform_id' => $platformId])->fromUser($this->user);
+
 
         // Retornar response com token e cookie
         return $this->respondWithToken($token, $platformId);
@@ -49,7 +52,7 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
-            'user' => auth('api')->user(),
+            'user' => $this->user,
             'platform_id' => $platformId
         ]);
 
