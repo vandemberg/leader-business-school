@@ -147,6 +147,9 @@ const Course: React.FC<CourseProps> = ({
     const [videoUnavailable, setVideoUnavailable] = useState<boolean>(false);
     const [playerReady, setPlayerReady] = useState<boolean>(false);
     const playerRef = useRef<any>(null);
+    const [expandedModules, setExpandedModules] = useState<
+        Set<string | number>
+    >(new Set());
 
     const videoId = extractYouTubeId(currentVideo.url);
 
@@ -336,6 +339,54 @@ const Course: React.FC<CourseProps> = ({
     const nextVideo = getNextVideo();
     const isCompleted =
         videos.find((v) => v.id === currentVideo.id)?.watched || false;
+
+    // Group videos by module while preserving backend sort order
+    // Use Map to preserve insertion order (unlike objects with numeric keys)
+    const moduleMap = new Map<
+        string | number,
+        { module: Video["module"]; moduleName: string; videos: Video[] }
+    >();
+
+    videos.forEach((video) => {
+        const moduleKey = video.module?.id || "no-module";
+        const moduleName = video.module?.name || "Sem Módulo";
+
+        if (!moduleMap.has(moduleKey)) {
+            moduleMap.set(moduleKey, {
+                module: video.module,
+                moduleName,
+                videos: [],
+            });
+        }
+        moduleMap.get(moduleKey)!.videos.push(video);
+    });
+
+    // Convert Map to array to preserve order
+    const groupedVideos = Array.from(moduleMap.entries());
+
+    // Expand module of current video on mount and when video changes
+    useEffect(() => {
+        if (currentVideo.module?.id) {
+            setExpandedModules((prev) =>
+                new Set(prev).add(currentVideo.module!.id)
+            );
+        } else {
+            setExpandedModules((prev) => new Set(prev).add("no-module"));
+        }
+    }, [currentVideo.module?.id]);
+
+    // Toggle module expansion
+    const toggleModule = (moduleKey: string | number) => {
+        setExpandedModules((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(moduleKey)) {
+                newSet.delete(moduleKey);
+            } else {
+                newSet.add(moduleKey);
+            }
+            return newSet;
+        });
+    };
 
     return (
         <AuthenticatedLayout user={auth.user}>
@@ -971,77 +1022,148 @@ const Course: React.FC<CourseProps> = ({
                                 </div>
                                 <div className="mt-6 h-px bg-border-dark"></div>
                                 <div className="mt-6 flow-root">
-                                    <ul
-                                        className="-my-4 divide-y divide-border-dark max-h-[calc(100vh-20rem)] overflow-y-auto pr-2"
-                                        role="list"
-                                    >
-                                        {videos.map((video) => {
-                                            const isCurrent =
-                                                video.id === currentVideo.id;
-                                            const isWatched = video.watched;
-                                            const isLocked = false; // You can add logic for locked videos
+                                    <div className="max-h-[calc(100vh-20rem)] overflow-y-auto pr-2">
+                                        {groupedVideos.map(
+                                            (
+                                                [moduleKey, group],
+                                                groupIndex
+                                            ) => {
+                                                const isExpanded =
+                                                    expandedModules.has(
+                                                        group.module?.id ||
+                                                            "no-module"
+                                                    );
+                                                const moduleKeyForToggle =
+                                                    group.module?.id ||
+                                                    "no-module";
 
-                                            return (
-                                                <li
-                                                    key={video.id}
-                                                    className="flex items-center gap-4 py-4"
-                                                >
-                                                    {isWatched ? (
-                                                        <span className="material-symbols-outlined text-green-400 text-xl">
-                                                            check_circle
-                                                        </span>
-                                                    ) : isCurrent ? (
-                                                        <span className="material-symbols-outlined text-primary text-xl">
-                                                            play_circle
-                                                        </span>
-                                                    ) : isLocked ? (
-                                                        <span className="material-symbols-outlined text-text-secondary-dark text-xl">
-                                                            lock
-                                                        </span>
-                                                    ) : (
-                                                        <span className="material-symbols-outlined text-text-secondary-dark text-xl">
-                                                            radio_button_unchecked
-                                                        </span>
-                                                    )}
-                                                    <Link
-                                                        href={`/courses/${course.id}/videos/${video.id}`}
-                                                        className={`flex-1 ${
-                                                            isCurrent
-                                                                ? "bg-primary/10 -mx-4 px-4 rounded-lg py-2"
+                                                return (
+                                                    <div
+                                                        key={moduleKey}
+                                                        className={
+                                                            groupIndex > 0
+                                                                ? "mt-6"
                                                                 : ""
-                                                        }`}
+                                                        }
                                                     >
-                                                        <p
-                                                            className={`text-sm leading-tight ${
-                                                                isCurrent
-                                                                    ? "font-bold text-white"
-                                                                    : isLocked
-                                                                    ? "font-medium text-text-secondary-dark/70"
-                                                                    : "font-medium text-text-secondary-dark"
-                                                            }`}
+                                                        {/* Module Header */}
+                                                        <button
+                                                            onClick={() =>
+                                                                toggleModule(
+                                                                    moduleKeyForToggle
+                                                                )
+                                                            }
+                                                            className="w-full mb-3 pb-2 border-b border-border-dark flex items-center justify-between hover:opacity-80 transition-opacity"
                                                         >
-                                                            {video.title}
-                                                        </p>
-                                                        {video.time_in_seconds && (
-                                                            <p
-                                                                className={`text-xs mt-1 ${
-                                                                    isCurrent
-                                                                        ? "text-text-secondary-dark"
-                                                                        : isLocked
-                                                                        ? "text-text-secondary-dark/50"
-                                                                        : "text-text-secondary-dark/70"
+                                                            <h4 className="text-sm font-bold text-white">
+                                                                {
+                                                                    group.moduleName
+                                                                }
+                                                            </h4>
+                                                            <span
+                                                                className={`material-symbols-outlined text-text-secondary-dark transition-transform ${
+                                                                    isExpanded
+                                                                        ? "rotate-180"
+                                                                        : ""
                                                                 }`}
                                                             >
-                                                                {formatTime(
-                                                                    video.time_in_seconds
+                                                                expand_more
+                                                            </span>
+                                                        </button>
+                                                        {/* Videos List */}
+                                                        <div
+                                                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                                                isExpanded
+                                                                    ? "max-h-[5000px] opacity-100"
+                                                                    : "max-h-0 opacity-0"
+                                                            }`}
+                                                        >
+                                                            <ul
+                                                                className="divide-y divide-border-dark"
+                                                                role="list"
+                                                            >
+                                                                {group.videos.map(
+                                                                    (video) => {
+                                                                        const isCurrent =
+                                                                            video.id ===
+                                                                            currentVideo.id;
+                                                                        const isWatched =
+                                                                            video.watched;
+                                                                        const isLocked =
+                                                                            false; // You can add logic for locked videos
+
+                                                                        return (
+                                                                            <li
+                                                                                key={
+                                                                                    video.id
+                                                                                }
+                                                                                className="flex items-center gap-4 py-4"
+                                                                            >
+                                                                                {isWatched ? (
+                                                                                    <span className="material-symbols-outlined text-green-400 text-xl">
+                                                                                        check_circle
+                                                                                    </span>
+                                                                                ) : isCurrent ? (
+                                                                                    <span className="material-symbols-outlined text-primary text-xl">
+                                                                                        play_circle
+                                                                                    </span>
+                                                                                ) : isLocked ? (
+                                                                                    <span className="material-symbols-outlined text-text-secondary-dark text-xl">
+                                                                                        lock
+                                                                                    </span>
+                                                                                ) : (
+                                                                                    <span className="material-symbols-outlined text-text-secondary-dark text-xl">
+                                                                                        radio_button_unchecked
+                                                                                    </span>
+                                                                                )}
+                                                                                <Link
+                                                                                    href={`/courses/${course.id}/videos/${video.id}`}
+                                                                                    className={`flex-1 ${
+                                                                                        isCurrent
+                                                                                            ? "bg-primary/10 -mx-4 px-4 rounded-lg py-2"
+                                                                                            : ""
+                                                                                    }`}
+                                                                                >
+                                                                                    <p
+                                                                                        className={`text-sm leading-tight ${
+                                                                                            isCurrent
+                                                                                                ? "font-bold text-white"
+                                                                                                : isLocked
+                                                                                                ? "font-medium text-text-secondary-dark/70"
+                                                                                                : "font-medium text-text-secondary-dark"
+                                                                                        }`}
+                                                                                    >
+                                                                                        {
+                                                                                            video.title
+                                                                                        }
+                                                                                    </p>
+                                                                                    {video.time_in_seconds && (
+                                                                                        <p
+                                                                                            className={`text-xs mt-1 ${
+                                                                                                isCurrent
+                                                                                                    ? "text-text-secondary-dark"
+                                                                                                    : isLocked
+                                                                                                    ? "text-text-secondary-dark/50"
+                                                                                                    : "text-text-secondary-dark/70"
+                                                                                            }`}
+                                                                                        >
+                                                                                            {formatTime(
+                                                                                                video.time_in_seconds
+                                                                                            )}
+                                                                                        </p>
+                                                                                    )}
+                                                                                </Link>
+                                                                            </li>
+                                                                        );
+                                                                    }
                                                                 )}
-                                                            </p>
-                                                        )}
-                                                    </Link>
-                                                </li>
-                                            );
-                                        })}
-                                    </ul>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            }
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

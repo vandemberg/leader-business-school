@@ -6,11 +6,10 @@ use App\Models\User;
 use App\Models\Invitation;
 use App\Models\PlatformUser;
 use App\Models\WatchVideo;
-use App\Mail\InvitationMail;
+use App\Mail\SendEmail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 
 class UsersController extends Controller
 {
@@ -148,8 +147,31 @@ class UsersController extends Controller
         // Carregar relacionamento da plataforma
         $invitation->load('platform');
 
+        // Construir URL baseada no tipo de usuário
+        if ($isNewUser) {
+            $inviteUrl = url("/invite/register/{$invitation->token}");
+        } else {
+            $inviteUrl = url("/invite/accept/{$invitation->token}");
+        }
+
+        // Determinar assunto
+        $subject = $isNewUser 
+            ? 'Convite para se cadastrar na plataforma'
+            : 'Convite para acessar a plataforma';
+
         // Enviar email com link de convite
-        Mail::to($data['email'])->send(new InvitationMail($invitation, $isNewUser));
+        $sendEmail = new SendEmail();
+        $sendEmail->sendTemplate(
+            to: $data['email'],
+            subject: $subject,
+            view: 'emails.invitation',
+            data: [
+                'invitation' => $invitation,
+                'isNewUser' => $isNewUser,
+                'inviteUrl' => $inviteUrl,
+                'platform' => $invitation->platform,
+            ]
+        );
 
         return response()->json([
             'message' => 'Convite enviado com sucesso',

@@ -4,9 +4,9 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Video;
+use App\Mail\SendEmail;
 use Exception;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
 class NewsletterService
@@ -62,18 +62,20 @@ class NewsletterService
     public function sendNewsletter(Video $video, string $newsletterContent): bool
     {
         try {
-            // In a real application, you would fetch subscribers from a database
-            // For now, we'll just log that we would send the newsletter
             Log::info("Newsletter Service: Sending newsletter for video: {$video->title}");
 
-            // Example code to send email (commented out for now)
+            $sendEmail = new SendEmail();
 
-            User::all()->each(function ($user) use ($video, $newsletterContent) {
-                Mail::send([], [], function ($message) use ($user, $video, $newsletterContent) {
-                    $message->to($user->email)
-                        ->subject($video->title)
-                        ->setBody($newsletterContent, 'text/html');
-                });
+            User::all()->each(function ($user) use ($video, $newsletterContent, $sendEmail) {
+                try {
+                    $sendEmail->send(
+                        to: $user->email,
+                        subject: $video->title,
+                        html: $newsletterContent
+                    );
+                } catch (Exception $e) {
+                    Log::error("Newsletter Service: Error sending newsletter to user {$user->email}: " . $e->getMessage());
+                }
             });
 
             return true;

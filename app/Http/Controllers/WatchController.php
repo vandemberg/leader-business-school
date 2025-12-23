@@ -30,8 +30,14 @@ class WatchController extends Controller
 
         $videos = $course->videos()
             ->with('module')
-            ->orderBy('order')
             ->get()
+            ->sortBy(function ($video) {
+                // Sort by module order first, then by video order
+                // Videos without module go to the end (999999)
+                $moduleOrder = $video->module ? ($video->module->order ?? 999999) : 999999;
+                return [$moduleOrder, $video->order ?? 999999];
+            })
+            ->values()
             ->map(function ($video) use ($user) {
                 $watched = WatchVideo::where('user_id', $user->id)
                     ->where('video_id', $video->id)

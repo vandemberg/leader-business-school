@@ -33,7 +33,11 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     {/* Abstract gradient lines */}
                     <div className="absolute inset-0">
                         <div className="absolute top-0 left-0 w-full h-full">
-                            <svg className="w-full h-full" viewBox="0 0 400 800" preserveAspectRatio="none">
+                            <svg
+                                className="w-full h-full"
+                                viewBox="0 0 400 800"
+                                preserveAspectRatio="none"
+                            >
                                 <path
                                     d="M0,100 Q200,50 400,150 T400,300 Q200,250 0,350 T0,600 Q200,550 400,650 T400,800"
                                     stroke="url(#gradient1)"
@@ -49,13 +53,41 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                                     className="opacity-40"
                                 />
                                 <defs>
-                                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#EC4899" stopOpacity="0.8" />
-                                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.4" />
+                                    <linearGradient
+                                        id="gradient1"
+                                        x1="0%"
+                                        y1="0%"
+                                        x2="100%"
+                                        y2="100%"
+                                    >
+                                        <stop
+                                            offset="0%"
+                                            stopColor="#EC4899"
+                                            stopOpacity="0.8"
+                                        />
+                                        <stop
+                                            offset="100%"
+                                            stopColor="#8B5CF6"
+                                            stopOpacity="0.4"
+                                        />
                                     </linearGradient>
-                                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.6" />
-                                        <stop offset="100%" stopColor="#6366F1" stopOpacity="0.3" />
+                                    <linearGradient
+                                        id="gradient2"
+                                        x1="0%"
+                                        y1="0%"
+                                        x2="100%"
+                                        y2="100%"
+                                    >
+                                        <stop
+                                            offset="0%"
+                                            stopColor="#3B82F6"
+                                            stopOpacity="0.6"
+                                        />
+                                        <stop
+                                            offset="100%"
+                                            stopColor="#6366F1"
+                                            stopOpacity="0.3"
+                                        />
                                     </linearGradient>
                                 </defs>
                             </svg>
@@ -69,13 +101,19 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                 <div className="w-full max-w-md mx-auto">
                     {/* Header */}
                     <div className="mb-8">
-                        <h1 className="text-5xl font-bold text-white mb-2 font-heading">LBS</h1>
-                        <p className="text-white/80 text-lg">Leader Business School</p>
+                        <h1 className="text-5xl font-bold text-white mb-2 font-heading">
+                            LBS
+                        </h1>
+                        <p className="text-white/80 text-lg">
+                            Leader Business School
+                        </p>
                     </div>
 
                     {/* Welcome message */}
                     <div className="mb-8">
-                        <h2 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h2>
+                        <h2 className="text-3xl font-bold text-white mb-2">
+                            Bem-vindo de volta
+                        </h2>
                         <p className="text-white/70 text-base">
                             Acesse sua conta para continuar seus estudos.
                         </p>
@@ -92,7 +130,10 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     <form onSubmit={submit} className="space-y-6">
                         {/* Email field */}
                         <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-white mb-2">
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-white mb-2"
+                            >
                                 E-mail
                             </label>
                             <div className="relative">
@@ -120,21 +161,29 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                                     placeholder="seuemail@exemplo.com"
                                     autoComplete="username"
                                     autoFocus
-                                    onChange={(e) => setData('email', e.target.value)}
+                                    onChange={(e) =>
+                                        setData("email", e.target.value)
+                                    }
                                 />
                             </div>
-                            <InputError message={errors.email} className="mt-2" />
+                            <InputError
+                                message={errors.email}
+                                className="mt-2"
+                            />
                         </div>
 
                         {/* Password field */}
                         <div>
                             <div className="flex items-center justify-between mb-2">
-                                <label htmlFor="password" className="block text-sm font-medium text-white">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-sm font-medium text-white"
+                                >
                                     Senha
                                 </label>
                                 {canResetPassword && (
                                     <Link
-                                        href={route('password.request')}
+                                        href={route("password.request")}
                                         className="text-sm text-primary hover:text-primary/80 transition"
                                     >
                                         Esqueceu a senha?
@@ -159,18 +208,22 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                                 </div>
                                 <input
                                     id="password"
-                                    type={showPassword ? 'text' : 'password'}
+                                    type={showPassword ? "text" : "password"}
                                     name="password"
                                     value={data.password}
                                     className="block w-full pl-12 pr-12 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"
                                     placeholder="Digite sua senha"
                                     autoComplete="current-password"
-                                    onChange={(e) => setData('password', e.target.value)}
+                                    onChange={(e) =>
+                                        setData("password", e.target.value)
+                                    }
                                 />
                                 <button
                                     type="button"
                                     className="absolute inset-y-0 right-0 pr-4 flex items-center"
-                                    onClick={() => setShowPassword(!showPassword)}
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
                                 >
                                     {showPassword ? (
                                         <svg
@@ -209,7 +262,10 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                                     )}
                                 </button>
                             </div>
-                            <InputError message={errors.password} className="mt-2" />
+                            <InputError
+                                message={errors.password}
+                                className="mt-2"
+                            />
                         </div>
 
                         {/* Submit button */}
@@ -218,22 +274,9 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                             disabled={processing}
                             className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-white font-semibold rounded-lg transition focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            {processing ? 'Entrando...' : 'Entrar'}
+                            {processing ? "Entrando..." : "Entrar"}
                         </button>
                     </form>
-
-                    {/* Registration link */}
-                    <div className="mt-6 text-center">
-                        <p className="text-white/70 text-sm">
-                            Não tem uma conta?{' '}
-                            <Link
-                                href={'#'}
-                                className="text-primary hover:text-primary/80 font-medium transition"
-                            >
-                                Crie uma conta
-                            </Link>
-                        </p>
-                    </div>
                 </div>
             </div>
         </div>

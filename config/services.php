@@ -35,4 +35,8 @@ return [
         'api_key' => env('OPENAI_API_KEY'),
     ],
 
+    'sendgrid' => [
+        'api_key' => env('SENDGRID_API_KEY'),
+    ],
+
 ];
