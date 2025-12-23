@@ -22,12 +22,18 @@ class Course extends Model
         'thumbnail',
         'responsible_id',
         'platform_id',
+        'is_personal',
+        'share_token',
     ];
 
     use HasFactory;
 
     protected $attributes = [
         'status' => 'draft',
+    ];
+
+    protected $casts = [
+        'is_personal' => 'boolean',
     ];
 
     public function currentVideo($user): Video
@@ -95,6 +101,11 @@ class Course extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class, 'tag_courses');
+    }
+
+    public function enrolledUsers()
+    {
+        return $this->belongsToMany(User::class, 'course_user')->withTimestamps();
     }
 
     /**

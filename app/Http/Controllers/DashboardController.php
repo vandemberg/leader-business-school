@@ -22,6 +22,19 @@ class DashboardController extends Controller
         // Filter courses by platform - include courses without platform_id for backward compatibility
         // Exclude draft courses
         $coursesQuery = Course::query()->whereNotIn('status', [Course::STATUS_DRAFT]);
+        $coursesQuery->where(function ($query) use ($user) {
+            $query->where(function ($subQuery) {
+                $subQuery->where('is_personal', false)->orWhereNull('is_personal');
+            })->orWhere(function ($subQuery) use ($user) {
+                $subQuery->where('is_personal', true)
+                    ->where(function ($personalQuery) use ($user) {
+                        $personalQuery->where('responsible_id', $user->id)
+                            ->orWhereHas('enrolledUsers', function ($enrolledQuery) use ($user) {
+                                $enrolledQuery->where('user_id', $user->id);
+                            });
+                    });
+            });
+        });
         if ($platformId) {
             $coursesQuery->where(function ($q) use ($platformId) {
                 $q->where('platform_id', $platformId)

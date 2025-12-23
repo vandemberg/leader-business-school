@@ -10,12 +10,16 @@ use App\Services\BadgeUnlockService;
 use Inertia\Inertia;
 use App\Models\Course;
 use App\Models\Video;
+use Illuminate\Support\Str;
 
 class WatchController extends Controller
 {
     public function index(Course $course)
     {
         $user = auth()->user();
+        if ($redirect = $this->ensurePersonalCourseAccess($course, $user)) {
+            return $redirect;
+        }
         $currentVideo = $course->currentVideo($user);
 
         return response()->redirectTo("/courses/{$course->id}/videos/{$currentVideo->id}");
@@ -24,6 +28,9 @@ class WatchController extends Controller
     public function show(Course $course, Video $video)
     {
         $user = auth()->user();
+        if ($redirect = $this->ensurePersonalCourseAccess($course, $user)) {
+            return $redirect;
+        }
         $currentVideo = Video::where('id', $video->id)
             ->with(['module', 'course'])
             ->first();
@@ -147,5 +154,31 @@ class WatchController extends Controller
                 'status' => WatchVideo::STATUS_WATCHING,
             ]);
         }
+    }
+
+    private function ensurePersonalCourseAccess(Course $course, $user)
+    {
+        if (!$course->is_personal) {
+            return null;
+        }
+
+        if ($course->responsible_id === $user->id) {
+            return null;
+        }
+
+        $isEnrolled = $course->enrolledUsers()
+            ->where('user_id', $user->id)
+            ->exists();
+
+        if ($isEnrolled) {
+            return null;
+        }
+
+        if (!$course->share_token) {
+            $course->share_token = Str::uuid();
+            $course->save();
+        }
+
+        return redirect()->route('personal-courses.share', $course->share_token);
     }
 }

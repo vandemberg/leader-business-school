@@ -10,6 +10,10 @@ use App\Http\Controllers\VideoRatingController;
 use App\Http\Controllers\VideoReportController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\HelpController;
+use App\Http\Controllers\PersonalCourseModulesController;
+use App\Http\Controllers\PersonalCourseShareController;
+use App\Http\Controllers\PersonalCourseVideosController;
+use App\Http\Controllers\PersonalCoursesController;
 use Illuminate\Support\Facades\Route;
 
 // class from admin
@@ -47,6 +51,20 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/courses', [CoursesController::class, 'index'])->name('courses.index');
     Route::get('/teachers', [TeachersController::class, 'index'])->name('teachers.index');
+
+    Route::get('/personal-courses', [PersonalCoursesController::class, 'index'])->name('personal-courses.index');
+    Route::post('/personal-courses', [PersonalCoursesController::class, 'store'])->name('personal-courses.store');
+    Route::get('/personal-courses/{course}/edit', [PersonalCoursesController::class, 'edit'])->name('personal-courses.edit');
+    Route::put('/personal-courses/{course}', [PersonalCoursesController::class, 'update'])->name('personal-courses.update');
+    Route::post('/personal-courses/{course}/modules', [PersonalCourseModulesController::class, 'store'])->name('personal-courses.modules.store');
+    Route::put('/personal-courses/{course}/modules/{module}', [PersonalCourseModulesController::class, 'update'])->name('personal-courses.modules.update');
+    Route::delete('/personal-courses/{course}/modules/{module}', [PersonalCourseModulesController::class, 'destroy'])->name('personal-courses.modules.destroy');
+    Route::post('/personal-courses/{course}/modules/{module}/videos', [PersonalCourseVideosController::class, 'store'])->name('personal-courses.videos.store');
+    Route::put('/personal-courses/{course}/modules/{module}/videos/{video}', [PersonalCourseVideosController::class, 'update'])->name('personal-courses.videos.update');
+    Route::delete('/personal-courses/{course}/modules/{module}/videos/{video}', [PersonalCourseVideosController::class, 'destroy'])->name('personal-courses.videos.destroy');
+
+    Route::get('/personal-courses/share/{token}', [PersonalCourseShareController::class, 'show'])->name('personal-courses.share');
+    Route::post('/personal-courses/share/{token}/enroll', [PersonalCourseShareController::class, 'enroll'])->name('personal-courses.share.enroll');
 
     Route::get('/courses/{course}/watch', [WatchController::class, 'index'])->name('courses.watch');
     Route::get('/courses/{course}/videos/{video}', [WatchController::class, 'show'])->name('courses.videos.show');
