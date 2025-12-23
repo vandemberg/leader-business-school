@@ -49,11 +49,11 @@ const Dashboard: React.FC<DashboardProps> = ({
     coursesInProgressForGrid,
     globalProgress,
     totalHoursWatched,
-    filter = 'in_progress',
+    filter = "in_progress",
     streak,
-    badges = []
+    badges = [],
 }) => {
-    const userName = auth.user.name.split(' ')[0]; // Get first name
+    const userName = auth.user.name.split(" ")[0]; // Get first name
     const [selectedFilter, setSelectedFilter] = useState(filter);
     const adsenseClientId = import.meta.env.VITE_ADSENSE_CLIENT_ID;
     const adsenseDashboardSlot = import.meta.env.VITE_ADSENSE_DASHBOARD_SLOT;
@@ -78,27 +78,31 @@ const Dashboard: React.FC<DashboardProps> = ({
 
     // Mapear títulos e mensagens baseado no filtro
     const filterTitleMap: { [key: string]: string } = {
-        'all': 'Todos os cursos',
-        'in_progress': 'Em progresso',
-        'completed': 'Concluídos',
-        'not_started': 'Não iniciados'
+        all: "Todos os cursos",
+        in_progress: "Em progresso",
+        completed: "Concluídos",
+        not_started: "Não iniciados",
     };
 
     const filterEmptyMessageMap: { [key: string]: string } = {
-        'all': 'Nenhum curso encontrado.',
-        'in_progress': 'Nenhum curso em progresso no momento.',
-        'completed': 'Nenhum curso concluído ainda.',
-        'not_started': 'Nenhum curso não iniciado.'
+        all: "Nenhum curso encontrado.",
+        in_progress: "Nenhum curso em progresso no momento.",
+        completed: "Nenhum curso concluído ainda.",
+        not_started: "Nenhum curso não iniciado.",
     };
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newFilter = e.target.value;
         setSelectedFilter(newFilter);
-        
-        router.get(route("dashboard"), { filter: newFilter }, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+
+        router.get(
+            route("dashboard"),
+            { filter: newFilter },
+            {
+                preserveState: true,
+                preserveScroll: true,
+            }
+        );
     };
 
     return (
@@ -136,7 +140,10 @@ const Dashboard: React.FC<DashboardProps> = ({
                                     Progresso Global
                                 </p>
                                 <div className="relative w-40 h-40 mx-auto">
-                                    <svg className="w-full h-full" viewBox="0 0 36 36">
+                                    <svg
+                                        className="w-full h-full"
+                                        viewBox="0 0 36 36"
+                                    >
                                         <path
                                             className="text-white/10"
                                             d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
@@ -155,9 +162,27 @@ const Dashboard: React.FC<DashboardProps> = ({
                                             strokeWidth="3"
                                         ></path>
                                         <defs>
-                                            <linearGradient id="progressGradient" x1="0%" x2="100%" y1="0%" y2="0%">
-                                                <stop offset="0%" style={{ stopColor: '#8E2DE2', stopOpacity: 1 }}></stop>
-                                                <stop offset="100%" style={{ stopColor: '#4A00E0', stopOpacity: 1 }}></stop>
+                                            <linearGradient
+                                                id="progressGradient"
+                                                x1="0%"
+                                                x2="100%"
+                                                y1="0%"
+                                                y2="0%"
+                                            >
+                                                <stop
+                                                    offset="0%"
+                                                    style={{
+                                                        stopColor: "#8E2DE2",
+                                                        stopOpacity: 1,
+                                                    }}
+                                                ></stop>
+                                                <stop
+                                                    offset="100%"
+                                                    style={{
+                                                        stopColor: "#4A00E0",
+                                                        stopOpacity: 1,
+                                                    }}
+                                                ></stop>
                                             </linearGradient>
                                         </defs>
                                     </svg>
@@ -165,7 +190,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                                         <span className="text-4xl font-bold font-heading text-white">
                                             {globalProgress}%
                                         </span>
-                                        <span className="text-sm text-[#A0A0A0]">Concluído</span>
+                                        <span className="text-sm text-[#A0A0A0]">
+                                            Concluído
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -179,7 +206,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                                     <p className="text-white tracking-light text-5xl font-bold leading-none font-heading">
                                         {totalHoursWatched}
                                     </p>
-                                    <span className="text-[#A0A0A0] text-xl font-medium pb-1">horas</span>
+                                    <span className="text-[#A0A0A0] text-xl font-medium pb-1">
+                                        horas
+                                    </span>
                                 </div>
                             </div>
 
@@ -187,7 +216,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                             {streak && (
                                 <div className="flex flex-col gap-2 rounded-xl p-6 bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/30">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="material-symbols-outlined text-primary text-xl" style={{ fontVariationSettings: "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24" }}>
+                                        <span
+                                            className="material-symbols-outlined text-primary text-xl"
+                                            style={{
+                                                fontVariationSettings:
+                                                    "'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24",
+                                            }}
+                                        >
                                             local_fire_department
                                         </span>
                                         <p className="text-white text-base font-medium leading-normal">
@@ -199,12 +234,18 @@ const Dashboard: React.FC<DashboardProps> = ({
                                             {streak.current_streak}
                                         </p>
                                         <span className="text-white/70 text-xl font-medium pb-1">
-                                            {streak.current_streak === 1 ? 'dia' : 'dias'}
+                                            {streak.current_streak === 1
+                                                ? "dia"
+                                                : "dias"}
                                         </span>
                                     </div>
-                                    {streak.longest_streak > streak.current_streak && (
+                                    {streak.longest_streak >
+                                        streak.current_streak && (
                                         <p className="text-white/60 text-xs mt-1">
-                                            Recorde: {streak.longest_streak} {streak.longest_streak === 1 ? 'dia' : 'dias'}
+                                            Recorde: {streak.longest_streak}{" "}
+                                            {streak.longest_streak === 1
+                                                ? "dia"
+                                                : "dias"}
                                         </p>
                                     )}
                                 </div>
@@ -226,7 +267,9 @@ const Dashboard: React.FC<DashboardProps> = ({
                                         >
                                             <div
                                                 className="flex-shrink-0 w-16 h-12 bg-cover bg-center rounded"
-                                                style={{ backgroundImage: `url(${course.thumbnail})` }}
+                                                style={{
+                                                    backgroundImage: `url(${course.thumbnail})`,
+                                                }}
                                             ></div>
                                             <div className="flex-1">
                                                 <p className="text-white font-semibold line-clamp-1">
@@ -239,9 +282,13 @@ const Dashboard: React.FC<DashboardProps> = ({
                                             <div className="w-full h-1 bg-white/10 rounded-full max-w-24 hidden sm:block">
                                                 <div
                                                     className={`h-1 rounded-full ${
-                                                        course.progress === 100 ? 'bg-green-500' : 'bg-primary'
+                                                        course.progress === 100
+                                                            ? "bg-green-500"
+                                                            : "bg-primary"
                                                     }`}
-                                                    style={{ width: `${course.progress}%` }}
+                                                    style={{
+                                                        width: `${course.progress}%`,
+                                                    }}
                                                 ></div>
                                             </div>
                                             <span className="material-symbols-outlined text-white/50 group-hover:text-white transition-colors">
@@ -274,59 +321,76 @@ const Dashboard: React.FC<DashboardProps> = ({
                                 Conquistas
                             </h3>
                             <div className="grid grid-cols-3 gap-4 text-center">
-                                {badges.length > 0 ? (
-                                    badges.slice(0, 6).map((badge) => (
-                                        <div key={badge.id} className="flex flex-col items-center gap-2">
-                                            <div
-                                                className={`w-16 h-16 flex items-center justify-center rounded-full p-1 ${
-                                                    badge.unlocked
-                                                        ? 'bg-gradient-to-br from-secondary to-primary'
-                                                        : 'bg-white/10'
-                                                }`}
-                                            >
-                                                <div className="w-full h-full flex items-center justify-center bg-surface-dark rounded-full">
-                                                    <span
-                                                        className={`material-symbols-outlined text-3xl ${
-                                                            badge.unlocked ? 'text-white' : 'text-white/50'
-                                                        }`}
-                                                        style={badge.unlocked ? { color: badge.color } : {}}
-                                                    >
-                                                        {badge.icon || 'workspace_premium'}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <p
-                                                className={`text-xs leading-tight ${
-                                                    badge.unlocked ? 'text-white/80' : 'text-white/50'
-                                                }`}
-                                            >
-                                                {badge.title}
-                                            </p>
-                                        </div>
-                                    ))
-                                ) : (
-                                    // Placeholder quando não há badges
-                                    Array.from({ length: 6 }).map((_, index) => (
-                                        <div key={index} className="flex flex-col items-center gap-2">
-                                            <div className="w-16 h-16 flex items-center justify-center rounded-full p-1 bg-white/10">
-                                                <div className="w-full h-full flex items-center justify-center bg-surface-dark rounded-full">
-                                                    <span className="material-symbols-outlined text-3xl text-white/50">
-                                                        lock
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <p className="text-xs leading-tight text-white/50">
-                                                Bloqueada
-                                            </p>
-                                        </div>
-                                    ))
-                                )}
+                                {badges.length > 0
+                                    ? badges.slice(0, 6).map((badge) => (
+                                          <div
+                                              key={badge.id}
+                                              className="flex flex-col items-center gap-2"
+                                          >
+                                              <div
+                                                  className={`w-16 h-16 flex items-center justify-center rounded-full p-1 ${
+                                                      badge.unlocked
+                                                          ? "bg-gradient-to-br from-secondary to-primary"
+                                                          : "bg-white/10"
+                                                  }`}
+                                              >
+                                                  <div className="w-full h-full flex items-center justify-center bg-surface-dark rounded-full">
+                                                      <span
+                                                          className={`material-symbols-outlined text-3xl ${
+                                                              badge.unlocked
+                                                                  ? "text-white"
+                                                                  : "text-white/50"
+                                                          }`}
+                                                          style={
+                                                              badge.unlocked
+                                                                  ? {
+                                                                        color: badge.color,
+                                                                    }
+                                                                  : {}
+                                                          }
+                                                      >
+                                                          {badge.icon ||
+                                                              "workspace_premium"}
+                                                      </span>
+                                                  </div>
+                                              </div>
+                                              <p
+                                                  className={`text-xs leading-tight ${
+                                                      badge.unlocked
+                                                          ? "text-white/80"
+                                                          : "text-white/50"
+                                                  }`}
+                                              >
+                                                  {badge.title}
+                                              </p>
+                                          </div>
+                                      ))
+                                    : // Placeholder quando não há badges
+                                      Array.from({ length: 6 }).map(
+                                          (_, index) => (
+                                              <div
+                                                  key={index}
+                                                  className="flex flex-col items-center gap-2"
+                                              >
+                                                  <div className="w-16 h-16 flex items-center justify-center rounded-full p-1 bg-white/10">
+                                                      <div className="w-full h-full flex items-center justify-center bg-surface-dark rounded-full">
+                                                          <span className="material-symbols-outlined text-3xl text-white/50">
+                                                              lock
+                                                          </span>
+                                                      </div>
+                                                  </div>
+                                                  <p className="text-xs leading-tight text-white/50">
+                                                      Bloqueada
+                                                  </p>
+                                              </div>
+                                          )
+                                      )}
                             </div>
                         </div>
                     </div>
                 </section>
 
-                {adsenseClientId && adsenseDashboardSlot && (
+                {adsenseClientId && (
                     <section>
                         <div className="rounded-xl bg-surface-dark border border-white/10 p-4">
                             <p className="text-xs uppercase tracking-[0.2em] text-white/40 mb-3">
@@ -336,7 +400,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                                 className="adsbygoogle block w-full"
                                 style={{ display: "block" }}
                                 data-ad-client={adsenseClientId}
-                                data-ad-slot={adsenseDashboardSlot}
+                                // data-ad-slot={adsenseDashboardSlot}
                                 data-ad-format="auto"
                                 data-full-width-responsive="true"
                             />
@@ -348,7 +412,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                 <section>
                     <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
                         <h2 className="text-white text-[28px] font-bold leading-tight tracking-[-0.015em] font-heading">
-                            {filterTitleMap[selectedFilter] || 'Em progresso'}
+                            {filterTitleMap[selectedFilter] || "Em progresso"}
                         </h2>
                         <div className="flex flex-wrap items-center gap-4">
                             <div className="relative min-w-48">
@@ -362,15 +426,21 @@ const Dashboard: React.FC<DashboardProps> = ({
                                 />
                             </div>
                             <div className="relative min-w-48">
-                                <select 
+                                <select
                                     className="w-full bg-surface-dark border border-white/10 rounded-lg h-10 px-3 text-sm text-white focus:ring-primary focus:border-primary appearance-none"
                                     value={selectedFilter}
                                     onChange={handleFilterChange}
                                 >
                                     <option value="all">Todos os cursos</option>
-                                    <option value="in_progress">Em andamento</option>
-                                    <option value="completed">Concluídos</option>
-                                    <option value="not_started">Não iniciados</option>
+                                    <option value="in_progress">
+                                        Em andamento
+                                    </option>
+                                    <option value="completed">
+                                        Concluídos
+                                    </option>
+                                    <option value="not_started">
+                                        Não iniciados
+                                    </option>
                                 </select>
                                 <span className="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-white/50 pointer-events-none">
                                     expand_more
@@ -382,12 +452,16 @@ const Dashboard: React.FC<DashboardProps> = ({
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {coursesInProgressForGrid.length > 0 ? (
                             coursesInProgressForGrid.map((course) => (
-                                <PremiumCourseCard key={course.id} course={course} />
+                                <PremiumCourseCard
+                                    key={course.id}
+                                    course={course}
+                                />
                             ))
                         ) : (
                             <div className="col-span-full bg-surface-dark rounded-xl p-8 text-center border border-white/10">
                                 <p className="text-[#A0A0A0] text-lg">
-                                    {filterEmptyMessageMap[selectedFilter] || 'Nenhum curso encontrado.'}
+                                    {filterEmptyMessageMap[selectedFilter] ||
+                                        "Nenhum curso encontrado."}
                                 </p>
                                 <Link
                                     href={route("courses.index")}
