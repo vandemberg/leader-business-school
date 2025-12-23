@@ -55,11 +55,26 @@ const Dashboard: React.FC<DashboardProps> = ({
 }) => {
     const userName = auth.user.name.split(' ')[0]; // Get first name
     const [selectedFilter, setSelectedFilter] = useState(filter);
+    const adsenseClientId = import.meta.env.VITE_ADSENSE_CLIENT_ID;
+    const adsenseDashboardSlot = import.meta.env.VITE_ADSENSE_DASHBOARD_SLOT;
 
     // Sincronizar estado quando o prop filter mudar (após nova busca)
     useEffect(() => {
         setSelectedFilter(filter);
     }, [filter]);
+
+    useEffect(() => {
+        if (!adsenseClientId || !adsenseDashboardSlot) {
+            return;
+        }
+
+        try {
+            (window as any).adsbygoogle = (window as any).adsbygoogle || [];
+            (window as any).adsbygoogle.push({});
+        } catch (error) {
+            console.error("Falha ao carregar AdSense:", error);
+        }
+    }, [adsenseClientId, adsenseDashboardSlot]);
 
     // Mapear títulos e mensagens baseado no filtro
     const filterTitleMap: { [key: string]: string } = {
@@ -88,7 +103,15 @@ const Dashboard: React.FC<DashboardProps> = ({
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Dashboard" />
+            <Head title="Dashboard">
+                {adsenseClientId && (
+                    <script
+                        async
+                        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+                        crossOrigin="anonymous"
+                    />
+                )}
+            </Head>
 
             <div className="layout-content-container flex flex-col w-full max-w-7xl flex-1 gap-10">
                 {/* Greeting Section */}
@@ -302,6 +325,24 @@ const Dashboard: React.FC<DashboardProps> = ({
                         </div>
                     </div>
                 </section>
+
+                {adsenseClientId && adsenseDashboardSlot && (
+                    <section>
+                        <div className="rounded-xl bg-surface-dark border border-white/10 p-4">
+                            <p className="text-xs uppercase tracking-[0.2em] text-white/40 mb-3">
+                                Publicidade
+                            </p>
+                            <ins
+                                className="adsbygoogle block w-full"
+                                style={{ display: "block" }}
+                                data-ad-client={adsenseClientId}
+                                data-ad-slot={adsenseDashboardSlot}
+                                data-ad-format="auto"
+                                data-full-width-responsive="true"
+                            />
+                        </div>
+                    </section>
+                )}
 
                 {/* Courses Grid Section */}
                 <section>
