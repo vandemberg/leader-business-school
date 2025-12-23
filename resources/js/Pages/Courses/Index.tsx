@@ -69,6 +69,14 @@ const CoursesIndex: React.FC<CoursesIndexProps> = ({ auth, courses, categories, 
                         <p className="text-[#A0A0A0] text-base font-normal leading-normal max-w-2xl mx-auto">
                             Encontre a formação ideal para impulsionar sua carreira com os melhores especialistas do mercado.
                         </p>
+                        <div className="flex justify-center">
+                            <Link
+                                href={route("personal-courses.index")}
+                                className="flex items-center gap-2 rounded-lg border border-white/10 px-5 py-2 text-sm font-semibold text-white hover:border-primary hover:text-primary"
+                            >
+                                Criar curso pessoal
+                            </Link>
+                        </div>
                     </div>
 
                     {/* Search and Filters */}

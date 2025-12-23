@@ -19,7 +19,11 @@ class CoursesController extends Controller
         $level = $request->get('level', '');
         $sort = $request->get('sort', 'recent');
 
-        $query = Course::with(['tags', 'responsible'])->whereNotIn('status', [Course::STATUS_DRAFT]);
+        $query = Course::with(['tags', 'responsible'])
+            ->whereNotIn('status', [Course::STATUS_DRAFT])
+            ->where(function ($q) {
+                $q->where('is_personal', false)->orWhereNull('is_personal');
+            });
 
         if ($platformId) {
             $query->where(function ($q) use ($platformId) {
