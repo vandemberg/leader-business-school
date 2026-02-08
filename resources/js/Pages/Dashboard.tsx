@@ -101,21 +101,13 @@ const Dashboard: React.FC<DashboardProps> = ({
             {
                 preserveState: true,
                 preserveScroll: true,
-            }
+            },
         );
     };
 
     return (
         <AuthenticatedLayout user={auth.user}>
-            <Head title="Dashboard">
-                {adsenseClientId && (
-                    <script
-                        async
-                        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-                        crossOrigin="anonymous"
-                    />
-                )}
-            </Head>
+            <Head title="Dashboard"></Head>
 
             <div className="layout-content-container flex flex-col w-full max-w-7xl flex-1 gap-10">
                 {/* Greeting Section */}
@@ -383,7 +375,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                                                       Bloqueada
                                                   </p>
                                               </div>
-                                          )
+                                          ),
                                       )}
                             </div>
                         </div>
@@ -393,6 +385,11 @@ const Dashboard: React.FC<DashboardProps> = ({
                 {adsenseClientId && (
                     <section>
                         <div className="rounded-xl bg-surface-dark border border-white/10 p-4">
+                            <script
+                                async
+                                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2825040092076685"
+                                crossOrigin="anonymous"
+                            ></script>
                             <p className="text-xs uppercase tracking-[0.2em] text-white/40 mb-3">
                                 Publicidade
                             </p>
