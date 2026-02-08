@@ -13,6 +13,7 @@
   <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+  <meta name="google-adsense-account" content="ca-pub-2825040092076685">
 
   <!-- Scripts -->
   @viteReactRefresh

@@ -400,7 +400,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                                 className="adsbygoogle block w-full"
                                 style={{ display: "block" }}
                                 data-ad-client={adsenseClientId}
-                                // data-ad-slot={adsenseDashboardSlot}
+                                data-ad-slot={adsenseDashboardSlot}
                                 data-ad-format="auto"
                                 data-full-width-responsive="true"
                             />
