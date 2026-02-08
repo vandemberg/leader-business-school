@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use Event;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Auth\Notifications\ResetPassword;
 use App\Events\VideoCreated;
 use App\Listeners\HandleVideoCreated;
 
@@ -36,5 +38,22 @@ class AppServiceProvider extends ServiceProvider
         VideoCreated::class,
         HandleVideoCreated::class,
     );
+
+        ResetPassword::toMailUsing(function (object $notifiable, string $token) {
+            $url = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+
+            $expireMinutes = config('auth.passwords.'.config('auth.defaults.passwords').'.expire', 60);
+
+            return (new MailMessage)
+                ->subject('Redefinição de senha')
+                ->view('emails.password-reset', [
+                    'url' => $url,
+                    'userName' => $notifiable->name ?? null,
+                    'expireMinutes' => $expireMinutes,
+                ]);
+        });
     }
 }
