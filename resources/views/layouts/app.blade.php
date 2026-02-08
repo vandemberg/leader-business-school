@@ -13,11 +13,10 @@
   <!-- Fonts -->
   <link rel="dns-prefetch" href="//fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
-  <meta name="google-adsense-account" content="ca-pub-2825040092076685">
 
   <!-- Scripts -->
   @viteReactRefresh
-  @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+  @vite(['resources/css/app.css', 'resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
 </head>
 
 <body>
