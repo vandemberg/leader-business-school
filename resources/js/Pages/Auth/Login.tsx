@@ -99,16 +99,6 @@ export default function Login({ status, canResetPassword }: { status?: string, c
             {/* Right side - Login form section */}
             <div className="flex-1 lg:w-3/5 flex flex-col justify-center px-6 sm:px-12 lg:px-20 py-12 bg-background-dark">
                 <div className="w-full max-w-md mx-auto">
-                    {/* Header */}
-                    <div className="mb-8">
-                        <h1 className="text-5xl font-bold text-white mb-2 font-heading">
-                            LBS
-                        </h1>
-                        <p className="text-white/80 text-lg">
-                            Leader Business School
-                        </p>
-                    </div>
-
                     {/* Welcome message */}
                     <div className="mb-8">
                         <h2 className="text-3xl font-bold text-white mb-2">
