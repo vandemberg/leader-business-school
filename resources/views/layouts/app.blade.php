@@ -14,9 +14,8 @@
   <link rel="dns-prefetch" href="//fonts.bunny.net">
   <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
-  <!-- Scripts -->
-  @viteReactRefresh
-  @vite(['resources/css/app.css', 'resources/js/app.tsx'])
+  <!-- Styles e scripts Bootstrap para páginas Blade (convites, auth, etc.) -->
+  @vite(['resources/sass/app.scss', 'resources/js/bootstrap-blade.ts'])
 </head>
 
 <body>
