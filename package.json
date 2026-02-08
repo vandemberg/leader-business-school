@@ -4,7 +4,7 @@
     "scripts": {
         "dev": "vite",
         "dev:host": "vite --host",
-        "build": "npx tsc && npx vite build && npx vite build --ssr"
+        "build": "npx vite build && npx vite build --ssr"
     },
     "devDependencies": {
         "@headlessui/react": "^1.4.2",
