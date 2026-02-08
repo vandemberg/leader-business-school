@@ -106,7 +106,7 @@ class UsersController extends Controller
         $isNewUser = !$existingUser;
 
         if ($existingUser) {
-            // Verificar se já está na plataforma
+            // Bloquear apenas se o usuário já aceitou o convite (já está na plataforma)
             $alreadyInPlatform = PlatformUser::where('user_id', $existingUser->id)
                 ->where('platform_id', $platformId)
                 ->exists();
@@ -118,18 +118,11 @@ class UsersController extends Controller
             }
         }
 
-        // Verificar se já existe um convite pendente para este email nesta plataforma
-        $existingInvitation = Invitation::where('email', $data['email'])
+        // Invalidar convites pendentes (não aceitos) para permitir reenvio
+        Invitation::where('email', $data['email'])
             ->where('platform_id', $platformId)
             ->whereNull('accepted_at')
-            ->where('expires_at', '>', now())
-            ->first();
-
-        if ($existingInvitation) {
-            return response()->json([
-                'message' => 'Já existe um convite pendente para este email nesta plataforma'
-            ], 422);
-        }
+            ->delete();
 
         // Criar convite
         $token = Str::random(64);
@@ -155,7 +148,7 @@ class UsersController extends Controller
         }
 
         // Determinar assunto
-        $subject = $isNewUser 
+        $subject = $isNewUser
             ? 'Convite para se cadastrar na plataforma'
             : 'Convite para acessar a plataforma';
 
@@ -175,7 +168,8 @@ class UsersController extends Controller
 
         return response()->json([
             'message' => 'Convite enviado com sucesso',
-            'invitation' => $invitation
+            'invitation' => $invitation,
+            'invite_url' => $inviteUrl,
         ], 201);
     }
 

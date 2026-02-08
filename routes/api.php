@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\BadgesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\UsersController;
+use App\Http\Controllers\Admin\InvitationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +45,8 @@ Route::prefix('admin')->group(function () {
         Route::delete('users/{user}', [UsersController::class, 'removeFromPlatform'])->name('admin.users.destroy');
         Route::post('users/invite', [UsersController::class, 'invite'])->name('admin.users.invite');
         Route::delete('users/{user}/platform', [UsersController::class, 'removeFromPlatform'])->name('admin.users.remove-from-platform');
+
+        Route::get('invitations/pending', [InvitationController::class, 'index'])->name('admin.invitations.pending');
 
         // Tags routes
         Route::resource('tags', TagController::class);

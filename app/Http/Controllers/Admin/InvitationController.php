@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
 use App\Models\PlatformUser;
@@ -11,6 +10,43 @@ use Illuminate\Support\Facades\Hash;
 
 class InvitationController extends Controller
 {
+    /**
+     * Lista convites pendentes da plataforma atual (não aceitos e não expirados).
+     */
+    public function index(Request $request)
+    {
+        $platformId = $this->getPlatformId($request);
+
+        if (!$platformId) {
+            abort(403, 'Plataforma não identificada');
+        }
+
+        $invitations = Invitation::query()
+            ->where('platform_id', $platformId)
+            ->whereNull('accepted_at')
+            ->where('expires_at', '>', now())
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $list = $invitations->map(function (Invitation $invitation) {
+            $existsUser = User::where('email', $invitation->email)->exists();
+            $inviteUrl = $existsUser
+                ? url("/invite/accept/{$invitation->token}")
+                : url("/invite/register/{$invitation->token}");
+
+            return [
+                'id' => $invitation->id,
+                'email' => $invitation->email,
+                'token' => $invitation->token,
+                'expires_at' => $invitation->expires_at->toIso8601String(),
+                'created_at' => $invitation->created_at->toIso8601String(),
+                'invite_url' => $inviteUrl,
+            ];
+        });
+
+        return response()->json($list, 200);
+    }
+
     public function accept(Request $request, string $token)
     {
         $invitation = Invitation::where('token', $token)->first();
